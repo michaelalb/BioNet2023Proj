@@ -1,0 +1,98 @@
+"","STX7","EYA4"
+"Neuronal System",0.961016577888023,0
+"Biological oxidations",0,0.92146606065993
+"Drug ADME",0,0.916086159925137
+"Transmission across Chemical Synapses",0.955836077672381,0
+"Protein-protein interactions at synapses",0.942789693501761,0
+"Phase I - Functionalization of compounds",0,0.929428758171513
+"Nitric oxide stimulates guanylate cyclase",0.871808362839336,0
+"Extracellular matrix organization",0.888497607890828,0.883569650539242
+"Phase II - Conjugation of compounds",0,0
+"Regulation of insulin secretion",0.935604046069591,0
+"Glucuronidation",0,0
+"Potassium Channels",0,0
+"GPCR ligand binding",0.926663542655825,0.922083594469228
+"Aspirin ADME",0,0
+"Muscle contraction",0.953811524586433,0.947731516168516
+"Receptor-type tyrosine-protein phosphatases",0.895860927389387,0
+"Defective GALNT3 causes HFTC",0,0
+"Defective GALNT12 causes CRCS1",0,0
+"Cardiac conduction",0.946227224540886,0.937688919843341
+"Collagen biosynthesis and modifying enzymes",0.924930639394785,0
+"Defective C1GALT1C1 causes TNPS",0,0
+"Bile acid and bile salt metabolism",0.899043964547671,0.898203912307878
+"Cytosolic sulfonation of small molecules",0,0
+"Neurotransmitter receptors and postsynaptic signal transmission",0.93691306608051,0
+"APAP ADME",0,0
+"Integration of energy metabolism",0.930427402179009,0
+"Signaling by GPCR",0.955718378113162,0.953136540735813
+"Blood group systems biosynthesis",0,0
+"O-linked glycosylation",0.936771358926024,0
+"G alpha (i) signalling events",0.95738589806437,0.952398555130487
+"Post-translational modification: synthesis of GPI-anchored proteins",0.890224977934229,0
+"Metabolism",0.9414305538906,0.940058452750241
+"Neurotransmitter release cycle",0.795555852915753,0
+"Uptake and actions of bacterial toxins",0,0
+"Ethanol oxidation",0,0
+"Peptide ligand-binding receptors",0.924221961668177,0.917234821127092
+"RA biosynthesis pathway",0,0
+"Transport of inorganic cations/anions and amino acids/oligopeptides",0.922123810365245,0
+"Phase 0 - rapid depolarisation",0.930958787706634,0
+"Neurexins and neuroligins",0.932066949473335,0
+"Diseases associated with O-glycosylation of proteins",0.899779196772162,0
+"Voltage gated Potassium channels",0,0
+"Cytochrome P450 - arranged by substrate type",0,0.851291340969954
+"Presynaptic depolarization and calcium channel opening",0.868784002998573,0
+"Dectin-2 family",0,0
+"Collagen chain trimerization",0,0
+"Arachidonic acid metabolism",0,0.886200976954913
+"Synthesis of bile acids and bile salts",0.888122612073096,0.861990438229764
+"Class A/1 (Rhodopsin-like receptors)",0.918927663946753,0.912096703126194
+"Transport of small molecules",0.93344458194898,0.930984809215398
+"GPCR downstream signalling",0.958003930630955,0.955154903146413
+"NCAM1 interactions",0.920830518398991,0
+"Regulation of IGF Activity by IGFBP",0.904501042243482,0.905020302126484
+"SLC-mediated transmembrane transport",0.919783771384602,0
+"Platelet homeostasis",0.900280491442412,0.884490905414236
+"Adherens junctions interactions",0.881288134619704,0.854097560816467
+"Transcriptional regulation of pluripotent stem cells",0,0.906046166864781
+"Regulation of beta-cell development",0.85102657759993,0.828348722663
+"O-linked glycosylation of mucins",0,0
+"Class B/2 (Secretin family receptors)",0.904891832958925,0
+"Diseases of glycosylation",0.898430831540826,0
+"Trafficking of GluR2-containing AMPA receptors",0.882310318574751,0
+"Interaction between L1 and Ankyrins",0.930403813820225,0
+"Interleukin-4 and Interleukin-13 signaling",0.753814227288457,0.754708067312984
+"Regulation of gene expression in beta cells",0.822022231299432,0.758200249225486
+"Termination of O-glycan biosynthesis",0,0
+"Glycosaminoglycan metabolism",0.800640307819453,0
+"Ion channel transport",0.944623290968597,0.944797598319853
+"Synthesis of bile acids and bile salts via 24-hydroxycholesterol",0.703220869563885,0
+"Synthesis of Prostaglandins (PG) and Thromboxanes (TX)",0,0
+"Stimuli-sensing channels",0.920724154982714,0.920993016776055
+"Lewis blood group biosynthesis",0,0
+"Unblocking of NMDA receptors, glutamate binding and activation",0.923920888739502,0
+"CD22 mediated BCR regulation",0,0
+"Digestion",0,0
+"Ion homeostasis",0.905219530219727,0
+"Trafficking of AMPA receptors",0.913402124891362,0
+"Glutamate binding, activation of AMPA receptors and synaptic plasticity",0.913402124891362,0
+"Ion transport by P-type ATPases",0,0
+"Signaling by Retinoic Acid",0,0.845464607444541
+"Triglyceride metabolism",0.866544302770609,0.831597759765584
+"Diseases of metabolism",0.850509939459102,0.837234775269599
+"Scavenging by Class A Receptors",0.37623023072375,0
+"Collagen formation",0.924925348463501,0
+"Developmental Biology",0.918079178872632,0.918189921620629
+"G alpha (q) signalling events",0.934863681854965,0
+"Adrenaline,noradrenaline inhibits insulin secretion",0.910725317625927,0
+"Heme degradation",0,0
+"Sodium/Calcium exchangers",0,0
+"Synthesis of bile acids and bile salts via 7alpha-hydroxycholesterol",0.84765883412599,0.81753222138762
+"Acetylcholine Neurotransmitter Release Cycle",0.509354755691914,0
+"CRMPs in Sema3A signaling",0,0
+"Aflatoxin activation and detoxification",0,0
+"L1CAM interactions",0.88370862187034,0
+"Glucagon-type ligand receptors",0,0
+"Initial triggering of complement",0.849610418022714,0
+"NPAS4 regulates expression of target genes",0.811992810606809,0.75815698578785

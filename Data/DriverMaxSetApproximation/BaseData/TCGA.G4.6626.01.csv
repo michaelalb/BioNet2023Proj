@@ -1,0 +1,107 @@
+"","ASCC3","GRIK2"
+"Signaling by GPCR",0.944039626884309,0.946548969512777
+"GPCR downstream signalling",0.950304072422929,0.952974989274118
+"Neuronal System",0.927486497566989,0.926000057475465
+"Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell",0,0.768125307898436
+"GPCR ligand binding",0,0.925743041321212
+"G alpha (i) signalling events",0,0.951354026172499
+"Signaling Pathways",0.917824028114186,0.917941128633252
+"Potassium Channels",0.947616891468022,0.957119826189659
+"Transmission across Chemical Synapses",0.911909772158008,0.910215924679931
+"G alpha (q) signalling events",0.92225234940953,0.93027063337434
+"Class A/1 (Rhodopsin-like receptors)",0,0
+"Anti-inflammatory response favouring Leishmania parasite infection",0,0.924895794901111
+"Leishmania parasite growth and survival",0,0.924895794901111
+"Glucagon-type ligand receptors",0,0.931696721922864
+"Initial triggering of complement",0,0
+"Extracellular matrix organization",0.892099624830639,0.892775482460549
+"Biological oxidations",0.888326773553645,0
+"Platelet homeostasis",0,0.881783509602424
+"Peptide ligand-binding receptors",0,0
+"Adrenaline,noradrenaline inhibits insulin secretion",0,0.916546590487065
+"GABA B receptor activation",0,0.926114812052818
+"Activation of GABAB receptors",0,0.926114812052818
+"Neurotransmitter receptors and postsynaptic signal transmission",0.901210420930741,0.898127826204063
+"Classical antibody-mediated complement activation",0,0
+"Glucagon signaling in metabolic regulation",0,0.917848433339407
+"GABA receptor activation",0,0.904580146721128
+"G alpha (s) signalling events",0,0.957687295142078
+"Class B/2 (Secretin family receptors)",0,0.905198719459942
+"G-protein beta:gamma signalling",0,0.917597395312821
+"G beta:gamma signalling through PI3Kgamma",0,0.90847334127072
+"Inwardly rectifying K+ channels",0,0.920373036001196
+"G beta:gamma signalling through BTK",0,0.891934823049745
+"Integration of energy metabolism",0,0.927913360923752
+"Activation of G protein gated Potassium channels",0,0.912859683002898
+"G protein gated Potassium channels",0,0.912859683002898
+"Inhibition  of voltage gated Ca2+ channels via Gbeta/gamma subunits",0,0.912859683002898
+"ADP signalling through P2Y purinoceptor 12",0,0.900070072260766
+"Other interleukin signaling",0,0
+"Complement cascade",0,0
+"Nitric oxide stimulates guanylate cyclase",0,0.771358597642742
+"Cardiac conduction",0.924995381471696,0.916344158489496
+"Regulation of insulin secretion",0,0.916211545534146
+"G beta:gamma signalling through CDC42",0,0.890603562847143
+"G alpha (z) signalling events",0,0.918517050828641
+"ADP signalling through P2Y purinoceptor 1",0,0.899878636487646
+"MyD88 deficiency (TLR2/4)",0,0
+"IRAK4 deficiency (TLR2/4)",0,0
+"Diseases of Immune System",0,0
+"Diseases associated with the TLR signaling cascade",0,0
+"Signal amplification",0,0.91170585497279
+"Creation of C4 and C2 activators",0,0
+"Drug ADME",0.878413649483758,0
+"Unwinding of DNA",0.76072265335743,0
+"Glucuronidation",0,0
+"Aquaporin-mediated transport",0,0.814916661823306
+"Constitutive Signaling by Aberrant PI3K in Cancer",0,0.834637538588202
+"Phase II - Conjugation of compounds",0,0
+"Transport of small molecules",0.933940718664466,0.933965189046234
+"Muscle contraction",0.927711301471016,0.92091986119438
+"Glucagon-like Peptide-1 (GLP1) regulates insulin secretion",0,0.919764617309523
+"Vasopressin regulates renal water homeostasis via Aquaporins",0,0.884297958334057
+"GPER1 signaling",0,0.913865382779464
+"ADORA2B mediated anti-inflammatory cytokines production",0,0.913865382779464
+"Regulation of Complement cascade",0,0
+"Transcription of E2F targets under negative control by DREAM complex",0.817890599195262,0
+"Prostacyclin signalling through prostacyclin receptor",0,0.881493966795972
+"Leishmania infection",0.888238484519122,0.900156802534197
+"Interleukin-4 and Interleukin-13 signaling",0.730611615390799,0.716498168921967
+"Activation of Matrix Metalloproteinases",0,0
+"Activation of ATR in response to replication stress",0.83105640154909,0
+"G0 and Early G1",0.842644299263902,0
+"Arachidonic acid metabolism",0,0
+"Acetylcholine Neurotransmitter Release Cycle",0,0
+"Chemokine receptors bind chemokines",0,0
+"Phosphorylation of CD3 and TCR zeta chains",0,0
+"G beta:gamma signalling through PLC beta",0,0.881171463968173
+"Activation of kainate receptors upon glutamate binding",0,0.818543365012836
+"POU5F1 (OCT4), SOX2, NANOG activate genes related to proliferation",0,0
+"G-protein activation",0,0.88987564995947
+"Thromboxane signalling through TP receptor",0,0.88987564995947
+"Transcriptional regulation of pluripotent stem cells",0.845634847233162,0
+"Interaction between L1 and Ankyrins",0,0.891060482817586
+"Phase I - Functionalization of compounds",0.893632035480019,0
+"Presynaptic function of Kainate receptors",0,0.879569105027637
+"Protein-protein interactions at synapses",0,0.899102034820025
+"Voltage gated Potassium channels",0,0.904324693451419
+"Transport of inorganic cations/anions and amino acids/oligopeptides",0,0.905416675272769
+"Generation of second messenger molecules",0,0.787920150308024
+"Immune System",0.874159382171676,0.872885282153947
+"CD22 mediated BCR regulation",0,0
+"Cytosolic sulfonation of small molecules",0,0
+"Transcriptional regulation of testis differentiation",0,0
+"Negative regulation of TCF-dependent signaling by WNT ligand antagonists",0,0
+"Regulation of TLR by endogenous ligand",0,0
+"Interleukin-10 signaling",0,0
+"Molecules associated with elastic fibres",0.847131351389877,0
+"NCAM1 interactions",0,0
+"Biosynthesis of specialized proresolving mediators (SPMs)",0,0
+"G-protein mediated events",0,0.888861622082094
+"Neurexins and neuroligins",0,0.936863687101161
+"Caspase-mediated cleavage of cytoskeletal proteins",0,0.66296716187248
+"FCGR3A-mediated IL10 synthesis",0,0
+"Insulin processing",0,0
+"Bile acid and bile salt metabolism",0,0
+"Sialic acid metabolism",0,0
+"Ca2+ pathway",0.801737087993232,0.856177962154663

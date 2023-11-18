@@ -1,0 +1,109 @@
+"","PACRG","NT5E","SYNCRIP"
+"GPCR downstream signalling",0.957110818267481,0.961342575530825,0.959552580773674
+"Signaling by GPCR",0.950930648091454,0.954913526311087,0.953228805121318
+"Immunoregulatory interactions between a Lymphoid and a non-Lymphoid cell",0,0.820413910963885,0
+"Signaling Pathways",0.922383214969493,0.923064945711302,0.922360679369962
+"Immune System",0.904830725054704,0.904802534871068,0.904925081125342
+"Translocation of ZAP-70 to Immunological synapse",0,0,0
+"Neuronal System",0,0.954863973888193,0.955100885029796
+"Phosphorylation of CD3 and TCR zeta chains",0,0,0
+"GPCR ligand binding",0,0.92114212772028,0.921586942539403
+"G alpha (i) signalling events",0.952057412196232,0.960475253880794,0.952380876625958
+"Peptide ligand-binding receptors",0,0.920940605318877,0.921683154541071
+"Class A/1 (Rhodopsin-like receptors)",0,0.922909842924378,0.923610548063079
+"PD-1 signaling",0,0,0
+"Complement cascade",0,0,0.941148208859075
+"Generation of second messenger molecules",0,0,0
+"DNA strand elongation",0,0.87020772782584,0.874453315216259
+"G alpha (q) signalling events",0,0.93905463937242,0.939804140643245
+"Interferon gamma signaling",0,0.906533137214043,0.893915801987002
+"Initial triggering of complement",0,0,0
+"Inflammasomes",0,0.750591345147114,0.708473557382125
+"Transmission across Chemical Synapses",0,0.939535738816117,0.939942336599996
+"Potassium Channels",0,0.955133360804618,0
+"Classical antibody-mediated complement activation",0,0,0
+"Cytokine Signaling in Immune system",0.891811695981311,0.891725727277399,0.892005993382518
+"Regulation of Complement cascade",0,0,0.933108832786991
+"Unwinding of DNA",0,0,0
+"G alpha (s) signalling events",0,0.961803397191285,0.947903286614966
+"Creation of C4 and C2 activators",0,0,0
+"Purinergic signaling in leishmaniasis infection",0,0.781981464006705,0.739445635289765
+"Cell recruitment (pro-inflammatory response)",0,0.781981464006705,0.739445635289765
+"Extracellular matrix organization",0.855894288217738,0.865844928869366,0
+"MHC class II antigen presentation",0.918608432664488,0,0
+"Deposition of new CENPA-containing nucleosomes at the centromere",0.838568162198386,0.842699332848497,0
+"Nucleosome assembly",0.838568162198386,0.842699332848497,0
+"Regulation of insulin secretion",0,0.919789054519447,0
+"Interaction between L1 and Ankyrins",0,0,0
+"Phase 0 - rapid depolarisation",0,0.917522976469682,0
+"Other interleukin signaling",0,0,0.658197144604228
+"Cardiac conduction",0,0.937595409636,0
+"Glucagon-type ligand receptors",0,0.917860223890378,0
+"Polo-like kinase mediated events",0.832929707962203,0.751898349535401,0
+"The NLRP3 inflammasome",0,0.682067773652366,0.624497788675531
+"Chemokine receptors bind chemokines",0,0.919336871378416,0
+"Molecules associated with elastic fibres",0,0,0
+"Adaptive Immune System",0.896043913684742,0.895975645646041,0.893223006461779
+"Activation of the pre-replicative complex",0,0.847980335568268,0
+"Blood group systems biosynthesis",0,0,0
+"Endosomal/Vacuolar pathway",0,0,0
+"Activation of ATR in response to replication stress",0,0,0
+"Cell Cycle, Mitotic",0.927507414986316,0.923210445696992,0.927996456316604
+"Platelet homeostasis",0.821407341677295,0.903548935809276,0.834659723255614
+"Biological oxidations",0,0.915471319088631,0
+"Resolution of Sister Chromatid Cohesion",0.883511577921771,0,0.865098608411155
+"Leishmania infection",0.881705380278906,0.891446419355642,0.882082384620732
+"Class B/2 (Secretin family receptors)",0,0.894252058044842,0
+"Lewis blood group biosynthesis",0,0,0
+"Chromosome Maintenance",0.89707712731258,0.898556948151694,0.898703582789424
+"Interferon alpha/beta signaling",0,0.890061210075097,0.892178529062456
+"Binding and entry of HIV virion",0,0.46940398082444,0
+"Cell Cycle",0.924288855168072,0.924717054458813,0.925087577285155
+"Neurotransmitter receptors and postsynaptic signal transmission",0,0.930602694770751,0
+"Interferon Signaling",0.898497086883502,0.907037326470949,0.898491368146364
+"Condensation of Prophase Chromosomes",0.788034893017834,0.682921091501427,0
+"Interleukin-35 Signalling",0,0,0
+"Glucagon-like Peptide-1 (GLP1) regulates insulin secretion",0,0.903643605100706,0
+"Interleukin-4 and Interleukin-13 signaling",0.792575659679386,0.790174114988887,0.792390281024885
+"Nitric oxide stimulates guanylate cyclase",0,0.877996764887515,0
+"Lagging Strand Synthesis",0,0.806417235967136,0.814602795174162
+"Voltage gated Potassium channels",0,0,0
+"G0 and Early G1",0.846876995202112,0.785935014327432,0.846183952257617
+"G1/S-Specific Transcription",0.855517678606757,0.850387152258303,0.853732631865761
+"Peptide hormone metabolism",0,0.844028690176008,0.83123771919912
+"Chk1/Chk2(Cds1) mediated inactivation of Cyclin B:Cdk1 complex",0.774386216194768,0,0
+"Protein-protein interactions at synapses",0,0,0
+"Receptor-type tyrosine-protein phosphatases",0,0,0
+"ADP signalling through P2Y purinoceptor 1",0,0.882834667136017,0.842286417248923
+"Signal amplification",0,0.898727337758187,0.865784527089456
+"Innate Immune System",0.903014524533615,0.906502311392838,0.906710706034934
+"Cell Cycle Checkpoints",0.924825491486768,0.924893686262317,0.914151643537268
+"Adrenaline,noradrenaline inhibits insulin secretion",0,0.89504140555406,0
+"Integration of energy metabolism",0.899851303351104,0.912903305038313,0.899710474417539
+"Transcriptional regulation by the AP-2 (TFAP2) family of transcription factors",0.790847846834244,0.785339963552614,0.790383986175471
+"Glucagon signaling in metabolic regulation",0,0.904314605136218,0
+"Transcriptional regulation of granulopoiesis",0,0.827524428135195,0.832970784311684
+"Cyclin A/B1/B2 associated events during G2/M transition",0.832762405723798,0,0.772244591657752
+"Synthesis of Prostaglandins (PG) and Thromboxanes (TX)",0,0,0
+"Polymerase switching",0,0.749534280836272,0.760414610830685
+"Leading Strand Synthesis",0,0.749534280836272,0.760414610830685
+"Removal of the Flap Intermediate",0,0.763994259425321,0.775162277321029
+"Processive synthesis on the lagging strand",0,0.763994259425321,0.775162277321029
+"APOBEC3G mediated resistance to HIV-1 infection",0,0,0
+"Extension of Telomeres",0.875638962690242,0.86928218557871,0.87376665793053
+"Elastic fibre formation",0,0.766001595668702,0
+"G beta:gamma signalling through BTK",0,0.866933516401057,0
+"Trafficking and processing of endosomal TLR",0,0,0
+"Condensation of Prometaphase Chromosomes",0.741215881548678,0,0
+"Interleukin-27 signaling",0,0,0
+"Anti-inflammatory response favouring Leishmania parasite infection",0,0.886787022284823,0.868750568049287
+"Leishmania parasite growth and survival",0,0.886787022284823,0.868750568049287
+"ADP signalling through P2Y purinoceptor 12",0,0.878850240545586,0
+"Costimulation by the CD28 family",0.844566512906785,0.84334045623589,0.844641051621508
+"Amplification of signal from the kinetochores",0.895089922944173,0,0.872866427591891
+"Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal",0.895089922944173,0,0.872866427591891
+"Interleukin-2 family signaling",0,0,0
+"Telomere C-strand (Lagging Strand) Synthesis",0,0.839676565296949,0.845954633456273
+"G-protein beta:gamma signalling",0.863457207780968,0.899303808105442,0
+"RAF-independent MAPK1/3 activation",0.714530385085255,0.707953936254847,0
+"Ion homeostasis",0,0.927260607020613,0
