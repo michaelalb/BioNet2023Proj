@@ -8,7 +8,7 @@ if __name__ == '__main__':
     matching_data_handler.load_data()
     graph = matching_data_handler.get_graph()
     matching_solver = MatchingSolver()
-    draw_graph(graph, patients=['TCGA.3L.AA1B.01'])
+    # draw_graph(graph, patients=['TCGA.3L.AA1B.01'])
 
     cover_set = matching_solver.find_min_cover_set(graph)
 

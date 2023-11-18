@@ -4,6 +4,7 @@ from networkx.algorithms import bipartite
 
 
 def draw_graph(graph, patients=None):
+    graph = graph.copy()
     plt.figure(figsize=(62, 62))
     patient_pathway, SNVs = bipartite.sets(graph)
     pathways = list(set([name[1] for name in list(patient_pathway)]))

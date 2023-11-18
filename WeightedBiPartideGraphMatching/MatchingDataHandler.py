@@ -24,7 +24,7 @@ class MatchingDataHandler:
                 if weight != 0:
                     self._graph.add_node(snv, bipartite=1)  # Add the snv to the other side
                     self._graph.add_edge(patient_pathway_node, snv,
-                                        weight=weight)  # Add the edge weighted by the cell value
+                                         weight=1 / weight)  # Add the edge weighted by the cell value
 
     def remove_disconnected(self):
         if not nx.is_connected(self._graph):
