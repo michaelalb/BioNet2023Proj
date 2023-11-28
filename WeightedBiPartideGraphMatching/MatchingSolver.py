@@ -3,13 +3,16 @@ from pulp import LpProblem, LpMinimize, LpVariable, lpSum, LpInteger
 
 class MatchingSolver:
 
+    def _custom_sort(self, t):
+        return (t if isinstance(t[0], tuple) else t[::-1])
+
     def find_min_cover_set(self, graph, gamma=0.8, alpha=1, beta=0.4):
         prob = LpProblem("Minimum_Weight_Cover_Set", LpMinimize)
 
         # Create a binary variable to state that a node is included in the cover
         x = LpVariable.dicts("x", graph.nodes(), 0, 1, LpInteger)
         y = LpVariable.dicts("y", graph.nodes(), 0, 1, LpInteger)
-        e = LpVariable.dicts("e", (tuple(sorted(edge)) for edge in graph.edges()), 0, 1, LpInteger)
+        e = LpVariable.dicts("e", (tuple(self._custom_sort(edge)) for edge in graph.edges()), 0, 1, LpInteger)
 
         # Objective function
         prob += lpSum([x[node] for node in graph.nodes()])
@@ -18,12 +21,12 @@ class MatchingSolver:
         for i in graph.nodes():
             for j in graph.neighbors(i):
                 # Constraint 1: xi=eij
-                prob += x[i] - e[(i, j)] == 0
+                prob += x[i] - e[self._custom_sort((i, j))] == 0
 
                 # Constraint 2: Σi eij wij≥yj γ λj Σi wij
                 wij = graph[i][j]['weight']
                 lambda_j = 1.0 / wij  # λ values are the reciprocal of the weights
-                prob += lpSum([e[tuple(sorted((i, j)))] * wij for i in graph.neighbors(j)]) >= y[
+                prob += lpSum([e[tuple(self._custom_sort((i, j)))] * wij for i in graph.neighbors(j)]) >= y[
                     j] * gamma * lambda_j * wij
 
                 # Constraint 3: Σj yj≥α |Y|
@@ -40,4 +43,5 @@ class MatchingSolver:
 
         # Return the nodes included in the cover
         cover_set = [node for node in x if x[node].varValue == 1]
-        return cover_set
+        not_cover_set = [node for node in x if x[node].varValue == 0]
+        return cover_set, not_cover_set

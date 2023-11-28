@@ -10,7 +10,9 @@ if __name__ == '__main__':
     matching_solver = MatchingSolver()
     # draw_graph(graph, patients=['TCGA.3L.AA1B.01'])
 
-    cover_set = matching_solver.find_min_cover_set(graph)
+    cover_set, uncover_set = matching_solver.find_min_cover_set(graph)
+    print(len(cover_set))
+    print(len(uncover_set))
 
     print('nodes')
     print(graph.nodes(data=True))
