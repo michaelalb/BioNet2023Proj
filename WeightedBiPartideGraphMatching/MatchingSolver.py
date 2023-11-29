@@ -90,4 +90,9 @@ class MatchingSolver:
             u, v = edge
             new_graph.add_edge(u, v)#, weight=weight)
 
+        # todo:
+        # 1. add weights to new graph
+        # 2. build out to functions
+        # 3. filter out weakly connected genes
+
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
