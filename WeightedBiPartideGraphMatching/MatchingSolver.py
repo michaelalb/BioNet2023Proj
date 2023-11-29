@@ -1,6 +1,7 @@
 from pulp import LpProblem, LpVariable, lpSum, LpInteger, LpMaximize
 import json
 import networkx as nx
+import pickle
 
 
 class MatchingSolver:
@@ -64,7 +65,7 @@ class MatchingSolver:
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
         print(f"total weight: {prob.objective.value()}")
         print(f'chosen edges: {len(chosen_edges)} out of {len(sorted_edges)}')
-        print(f'total sum of weights: {sum([abs(d["weight"]) for n, d in sorted_edges_data])}')
+        print(f'total sum of weights: {sum([abs(d["weight"]) for _, _, d in sorted_edges_data])}')
 
         # save results to json file
         data = {
@@ -73,7 +74,7 @@ class MatchingSolver:
             'chosen_edges': chosen_edges,
             'not_cover_set': not_cover_set,
             'total_weight': prob.objective.value(),
-            'total_sum_of_weights': sum([abs(d["weight"]) for n, d in sorted_edges_data]),
+            'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d  in sorted_edges_data]),
         }
         with open('./cover_set.json', 'w+') as f:
             json.dump(data, f)
@@ -90,6 +91,14 @@ class MatchingSolver:
             u, v = edge
             new_graph.add_edge(u, v)#, weight=weight)
 
+        with open('./new_graph.pickle.pkl', 'wb+') as f:
+            pickle.dump(new_graph, f)
+
+        c = {}
+        for gene_node in bottom_cover_set:
+            deg = new_graph.degree(gene_node)
+            c[deg] = c.get(deg, 0) + 1
+        print(c)
         # todo:
         # 1. add weights to new graph
         # 2. build out to functions
