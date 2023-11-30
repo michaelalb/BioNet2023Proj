@@ -3,12 +3,13 @@ import json
 import networkx as nx
 import pickle
 
+from WeightedBiPartideGraphMatching.GraphHandlers import create_new_bipartite_graph
+
 
 class MatchingSolver:
 
     def _custom_sort(self, t):
         "sort so gene  nodes are first, then pathway nodes"
-        # todo: assert this actually does this
         if isinstance(t[0], str):
             return t
         else:
@@ -17,6 +18,55 @@ class MatchingSolver:
             else:
                 return t[1], t[0], t[2]
 
+    def get_nodes_edges_from_ILP_res(self, graph: nx.Graph,
+                                     sorted_edges_data,
+                                     edges,
+                                     patient_pathway_nodes,
+                                     gene_nodes,
+                                     bottom_nodes,
+                                     top_nodes):
+        """
+        Get the nodes and edges from the ILP result
+        :param graph: The original graph
+        :param sorted_edges_data: sorted edges data with weight
+        :param edges: ILP dict of edges with results
+        :param patient_pathway_nodes: ILP dict of  all original top nodes with results
+        :param gene_nodes: ILP dict of all original bottom nodes with results
+        :param bottom_nodes:list of all original bottom nodes with results - genes
+        :param top_nodes: list of all original top nodes with results - patient pathways
+        :return:
+        """
+
+        bottom_cover_set = [node for node in bottom_nodes if gene_nodes[node].varValue == 1]
+        top_cover_set = [node for node in top_nodes if patient_pathway_nodes[node].varValue == 1]
+        cover_set = bottom_cover_set + top_cover_set
+        not_cover_set = [node for node in graph.nodes() if node not in cover_set]
+        chosen_edges = [edge for edge in sorted_edges_data if edges[edge].varValue == 1]
+        return bottom_cover_set, top_cover_set, cover_set, not_cover_set, chosen_edges
+
+    def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
+                               sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
+                               new_graph):
+        # print optimization results
+        print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
+        print(f"total weight: {prob.objective.value()}")
+        print(f'chosen edges: {len(chosen_edges)} out of {len(sorted_edges)}')
+        print(f'total sum of weights: {sum([abs(d["weight"]) for _, _, d in sorted_edges_data])}')
+
+        # save results to json file
+        data = {
+            'bottom_cover_set': bottom_cover_set,
+            'top_cover_set': top_cover_set,
+            'chosen_edges': chosen_edges,
+            'not_cover_set': not_cover_set,
+            'total_weight': prob.objective.value(),
+            'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
+        }
+        with open('./cover_set.json', 'w+') as f:
+            json.dump(data, f)
+
+        with open('./new_graph.pkl', 'wb+') as f:
+            pickle.dump(new_graph, f)
 
     def find_min_cover_set(self, graph: nx.Graph):
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
@@ -55,53 +105,13 @@ class MatchingSolver:
         prob.solve()
 
         # Return the nodes included in the cover
-        bottom_cover_set = [node for node in bottom_nodes if gene_nodes[node].varValue == 1]
-        top_cover_set = [node for node in top_nodes if patient_pathway_nodes[node].varValue == 1]
-        cover_set = bottom_cover_set + top_cover_set
-        not_cover_set = [node for node in graph.nodes() if node not in cover_set]
-        chosen_edges = [edge for edge in sorted_edges if edges[edge].varValue == 1]
+        bottom_cover_set, top_cover_set, cover_set, not_cover_set, chosen_edges = self.get_nodes_edges_from_ILP_res(
+            graph, sorted_edges_data, edges, patient_pathway_nodes, gene_nodes, bottom_nodes, top_nodes)
 
-        # print optimization results
-        print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
-        print(f"total weight: {prob.objective.value()}")
-        print(f'chosen edges: {len(chosen_edges)} out of {len(sorted_edges)}')
-        print(f'total sum of weights: {sum([abs(d["weight"]) for _, _, d in sorted_edges_data])}')
+        # create new graph with only the chosen edges
+        new_graph = create_new_bipartite_graph(bottom_cover_set, top_cover_set, chosen_edges)
 
-        # save results to json file
-        data = {
-            'bottom_cover_set': bottom_cover_set,
-            'top_cover_set': top_cover_set,
-            'chosen_edges': chosen_edges,
-            'not_cover_set': not_cover_set,
-            'total_weight': prob.objective.value(),
-            'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d  in sorted_edges_data]),
-        }
-        with open('./cover_set.json', 'w+') as f:
-            json.dump(data, f)
-
-        # Create a new bipartite graph
-        new_graph = nx.Graph()
-
-        # Add nodes with the bipartite attribute
-        new_graph.add_nodes_from(top_cover_set, bipartite=0)
-        new_graph.add_nodes_from(bottom_cover_set, bipartite=1)
-
-        # Add edges
-        for edge in chosen_edges:
-            u, v = edge
-            new_graph.add_edge(u, v)#, weight=weight)
-
-        with open('./new_graph.pickle.pkl', 'wb+') as f:
-            pickle.dump(new_graph, f)
-
-        c = {}
-        for gene_node in bottom_cover_set:
-            deg = new_graph.degree(gene_node)
-            c[deg] = c.get(deg, 0) + 1
-        print(c)
-        # todo:
-        # 1. add weights to new graph
-        # 2. build out to functions
-        # 3. filter out weakly connected genes
+        self.print_and_save_ILP_res(bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
+                                    sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph)
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
