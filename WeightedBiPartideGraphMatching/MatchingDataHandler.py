@@ -10,17 +10,9 @@ class MatchingDataHandler:
 
     def load_data(self):
         for file in self.directory.glob('*.csv'):
-            # found = False
-            # for patient in ['TCGA.AA.3852.01', 'TCGA.G4.6322.01', "TCGA.D5.6932.01", "TCGA.AA.3956.01"]:
-            #     if str(file).find(patient) != -1:
-            #         found = True
-            # if not found:
-            #     continue
             patient_name = file.stem
             df = pd.read_csv(file, index_col=0)
             self._add_to_graph(df, patient_name)
-
-        # self.remove_disconnected()
 
     def _add_to_graph(self, df, patient_name):
         for pathway in df.index:
@@ -32,14 +24,6 @@ class MatchingDataHandler:
                     self._graph.add_node(snv, bipartite=1)  # Add the snv to the other side
                     self._graph.add_edge(patient_pathway_node, snv,
                                          weight=weight)  # Add the edge weighted by the cell value
-
-    def remove_disconnected(self):
-        if not nx.is_connected(self._graph):
-            # Get the largest connected component
-            largest_cc = max(nx.connected_components(self._graph), key=len)
-
-            # Remove all nodes that are not in the largest connected component
-            self._graph = self._graph.subgraph(largest_cc).copy()
 
     def get_graph(self):
         return self._graph

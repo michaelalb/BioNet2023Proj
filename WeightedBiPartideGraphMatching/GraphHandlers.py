@@ -75,3 +75,25 @@ def get_graph_with_top_k_edges_from_graph_by_weight_sum(graph, node_weight_dict,
                 subgraph.add_edges_from(edges_to_add)
 
     return subgraph
+
+
+def get_rank_per_patient(graph, sorted_genes):
+    patient_node_names = [name for name, data in graph.nodes(data=True) if isinstance(name, tuple)]
+    patient_names = [name[0] if name[0].find('.') != -1 else name[1] for name in patient_node_names]
+
+    patient_genes = {}
+    # get all patient genes
+    for patient_name in patient_names:
+        patient_genes[patient_name] = []
+        for node in graph.nodes():
+            if isinstance(node, tuple) and node[0] == patient_name or node[1] == patient_name:
+                gene = [i for i in graph.neighbors(node)]
+                assert len(gene) == 1
+                patient_genes[patient_name].append(gene)
+    sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes, genes) for
+                            patient, genes in patient_genes.items()}
+    return sorted_patient_genes
+
+
+def sort_list_by_reference(reference_list, unordered_list):
+    return sorted(unordered_list, key=reference_list.index)
