@@ -38,11 +38,11 @@ if __name__ == '__main__':
         patients_with_ranked_genes_by_weight = get_rank_per_patient(new_graph, sorted_gene_names_by_weight)
         with open('./patients_with_ranked_genes_by_weight.json', 'w+') as f:
             json.dump(patients_with_ranked_genes_by_weight, f)
-        # k = 20
-        # print('getting top k sub graph')
-        # top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(new_graph, gene_weights, k)
-        # print('drawing graph')
-        # draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
-        # with open(f'./top_{k}_genes_graph.pkl', 'wb+') as f:
-        #     pickle.dump(top_k_sub_graph, f)
-        # print('a')
+        k = 20
+        print('getting top k sub graph')
+        top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(new_graph, gene_weights, k)
+        print('drawing graph')
+        draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
+        with open(f'./top_{k}_genes_graph.pkl', 'wb+') as f:
+            pickle.dump(top_k_sub_graph, f)
+        print('done')

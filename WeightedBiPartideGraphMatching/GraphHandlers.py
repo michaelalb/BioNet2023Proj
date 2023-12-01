@@ -62,19 +62,12 @@ def calculate_gene_edge_weight_sum(graph):
 def get_graph_with_top_k_edges_from_graph_by_weight_sum(graph, node_weight_dict, k):
     # Sort the dictionary by weight in descending order and get the top k nodes
     top_k_nodes = sorted(node_weight_dict, key=node_weight_dict.get, reverse=True)[:k]
+    nei = [i for node in top_k_nodes for i in graph.neighbors(node)]
 
     # Create a subgraph with only the top k nodes and their associated edges
-    subgraph = graph.subgraph(top_k_nodes).copy()
-
-    # Add the neighbors of the top k nodes to the subgraph
-    for node in top_k_nodes:
-        neighbors = graph.neighbors(node)
-        subgraph.add_nodes_from(neighbors)
-        # for neighbor in neighbors:
-        #     if neighbor not in subgraph:
-        #         edges_to_add = graph.edges(neighbor, data=True)
-        #         subgraph.add_edges_from(edges_to_add)
-
+    subgraph = graph.subgraph(top_k_nodes + nei).copy()
+    print(f"number of nodes in original graph: {len(graph.nodes())} reduced to {len(subgraph.nodes())}")
+    print(f"number of edges in original graph: {len(graph.edges())} reduced to {len(subgraph.edges())}")
     return subgraph
 
 
