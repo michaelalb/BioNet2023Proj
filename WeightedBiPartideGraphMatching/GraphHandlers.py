@@ -68,12 +68,41 @@ def get_graph_with_top_k_edges_from_graph_by_weight_sum(graph, node_weight_dict,
     subgraph = graph.subgraph(top_k_nodes + nei).copy()
     print(f"number of nodes in original graph: {len(graph.nodes())} reduced to {len(subgraph.nodes())}")
     print(f"number of edges in original graph: {len(graph.edges())} reduced to {len(subgraph.edges())}")
+    original_patient_names = get_patient_names_from_graph(graph)
+    subgraph_patient_names = get_patient_names_from_graph(subgraph)
+    print(f"number of patients in original graph: {len(original_patient_names)} reduced to {len(subgraph_patient_names)}")
+    lost_patients_count = 0
+    for patient_name in original_patient_names:
+        if patient_name not in subgraph_patient_names:
+            lost_patients_count += 1
+    print(f"number of patients lost: {lost_patients_count}")
+
+    original_pathway_names = get_pathway_names_from_graph(graph)
+    subgraph_pathway_names = get_pathway_names_from_graph(subgraph)
+    print(f"number of pathways in original graph: {len(original_pathway_names)} reduced to {len(subgraph_pathway_names)}")
+    lost_pathways_count = 0
+    for pathway_name in original_pathway_names:
+        if pathway_name not in subgraph_pathway_names:
+            lost_pathways_count += 1
+    print(f"number of pathways lost: {lost_pathways_count}")
+
     return subgraph
 
 
-def get_rank_per_patient(graph, sorted_genes):
+def get_patient_names_from_graph(graph):
     patient_node_names = [name for name, data in graph.nodes(data=True) if isinstance(name, tuple)]
     patient_names = list(set([name[0] if name[0].find('.') != -1 else name[1] for name in patient_node_names]))
+    return patient_names
+
+
+def get_pathway_names_from_graph(graph):
+    patient_node_names = [name for name, data in graph.nodes(data=True) if isinstance(name, tuple)]
+    pathway_names = list(set([name[0] if name[0].find('.') == -1 else name[1] for name in patient_node_names]))
+    return pathway_names
+
+
+def get_rank_per_patient(graph, sorted_genes):
+    patient_names = get_patient_names_from_graph(graph)
 
     patient_genes = {}
     # get all patient genes

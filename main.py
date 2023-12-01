@@ -39,7 +39,7 @@ if __name__ == '__main__':
         with open('./patients_with_ranked_genes_by_weight.json', 'w+') as f:
             json.dump(patients_with_ranked_genes_by_weight, f)
         k = 20
-        print('getting top k sub graph')
+        print(f'getting top {k} sub graph')
         top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(new_graph, gene_weights, k)
         print('drawing graph')
         draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
