@@ -41,7 +41,7 @@ class MatchingSolver:
         top_cover_set = [node for node in top_nodes if patient_pathway_nodes[node].varValue == 1]
         cover_set = bottom_cover_set + top_cover_set
         not_cover_set = [node for node in graph.nodes() if node not in cover_set]
-        chosen_edges = [edge for edge in sorted_edges_data if edges[edge].varValue == 1]
+        chosen_edges = [edge for edge in sorted_edges_data if edges[edge[:2]].varValue == 1]
         return bottom_cover_set, top_cover_set, cover_set, not_cover_set, chosen_edges
 
     def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,

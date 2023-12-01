@@ -5,7 +5,7 @@ from WeightedBiPartideGraphMatching.MatchingDataHandler import MatchingDataHandl
 from WeightedBiPartideGraphMatching.MatchingSolver import MatchingSolver
 from WeightedBiPartideGraphMatching.MatchingVisualizer import *
 
-SHOULD_CALC_NEW_GRAPH = True
+SHOULD_CALC_NEW_GRAPH = False
 
 if __name__ == '__main__':
     if SHOULD_CALC_NEW_GRAPH:
@@ -29,16 +29,20 @@ if __name__ == '__main__':
         gene_weights = calculate_gene_edge_weight_sum(new_graph)
         sorted_gene_names_by_weight = sorted(gene_weights, key=lambda x: gene_weights.get(x), reverse=True)
 
-        with open('./sorted_gene_names_by_weight.json', 'wb+') as f:
+        with open('./sorted_gene_names_by_weight.json', 'w+') as f:
             json.dump(sorted_gene_names_by_weight, f)
+        with open('./gene_weights.json', 'w+') as f:
+            json.dump(gene_weights, f)
 
         # for sub graphing
         patients_with_ranked_genes_by_weight = get_rank_per_patient(new_graph, sorted_gene_names_by_weight)
-        k = 20
-        print('getting top k sub graph')
-        top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(new_graph, gene_weights, k)
-        print('drawing graph')
-        draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
-        with open('./new_graph.pkl', 'wb+') as f:
-            pickle.dump(top_k_sub_graph, f)
-        print('a')
+        with open('./patients_with_ranked_genes_by_weight.json', 'w+') as f:
+            json.dump(patients_with_ranked_genes_by_weight, f)
+        # k = 20
+        # print('getting top k sub graph')
+        # top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(new_graph, gene_weights, k)
+        # print('drawing graph')
+        # draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
+        # with open(f'./top_{k}_genes_graph.pkl', 'wb+') as f:
+        #     pickle.dump(top_k_sub_graph, f)
+        # print('a')
