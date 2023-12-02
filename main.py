@@ -5,7 +5,7 @@ from WeightedBiPartideGraphMatching.MatchingDataHandler import MatchingDataHandl
 from WeightedBiPartideGraphMatching.MatchingSolver import MatchingSolver
 from WeightedBiPartideGraphMatching.MatchingVisualizer import *
 
-SHOULD_CALC_NEW_GRAPH = False
+SHOULD_CALC_NEW_GRAPH = True
 
 if __name__ == '__main__':
     if SHOULD_CALC_NEW_GRAPH:
