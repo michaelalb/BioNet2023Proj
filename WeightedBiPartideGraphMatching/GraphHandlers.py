@@ -101,7 +101,7 @@ def get_pathway_names_from_graph(graph):
     return pathway_names
 
 
-def get_rank_per_patient(graph, sorted_genes):
+def get_rank_per_patient_from_graph(graph, sorted_genes):
     patient_names = get_patient_names_from_graph(graph)
 
     patient_genes = {}
@@ -129,7 +129,8 @@ def load_patient_snps():
         patient_snps[patient_name] = df.columns.tolist()
     return patient_snps
 
-def get_rank_per_patient2(graph, sorted_genes):
+
+def get_rank_per_patient_from_base_data(sorted_genes):
     patient_genes = load_patient_snps()
     for patient in patient_genes.keys():
         patient_genes[patient] = list(set(patient_genes[patient]).intersection(sorted_genes))
