@@ -17,11 +17,11 @@ if __name__ == '__main__':
         graph = matching_data_handler.get_graph()
         matching_solver = MatchingSolver()
         print("saving graph picture")
-        draw_graph(graph, save=True, name='before.png')
+        #draw_graph(graph, save=True, name='before.png')
         print("finding min cover set")
         cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph = matching_solver.find_min_cover_set(graph)
         print("saving optimized graph picture")
-        draw_graph(new_graph, save=True, name='after.png')
+        #draw_graph(new_graph, save=True, name='after.png')
     else:
         print('loading graph')
         new_graph = load_graph_from_file('new_graph.pkl')
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         print(f'getting top {k} sub graph')
         top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(new_graph, gene_weights, k)
         print('drawing graph')
-        draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
+        #draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
         with open(f'./top_{k}_genes_graph.pkl', 'wb+') as f:
             pickle.dump(top_k_sub_graph, f)
         print('done')
