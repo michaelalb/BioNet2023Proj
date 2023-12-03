@@ -1,3 +1,4 @@
+import seaborn as sns
 import json
 import numpy as np
 import pandas as pd
@@ -92,10 +93,11 @@ patient_snps = load_patient_snps()
 ranked_genes_lists = json.load(open('./patients_with_ranked_genes_by_weight.json'))
 PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
 global_ranked_genes_lists = json.load(open('./sorted_gene_names_by_weight.json'))
-global_ranked_genes_lists.pop(0)
+global_ranked_genes_lists
 gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
 print("calculating performances")
 our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
 PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
+
 global_performances = check_performances({'TCGA.A6.2671.01':global_ranked_genes_lists}, patient_snps, gold_standard_drivers)
-plot_performances({'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances, 'global': global_performances})
+plot_performances({'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances})#, 'global': global_performances})

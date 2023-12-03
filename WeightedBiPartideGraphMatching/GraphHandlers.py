@@ -119,5 +119,24 @@ def get_rank_per_patient(graph, sorted_genes):
     return sorted_patient_genes
 
 
+def load_patient_snps():
+    import pandas as pd
+    from pathlib import Path
+    patient_snps = {}
+    for file in Path('Data/DriverMaxSetApproximation/BaseData').glob('*.csv'):
+        patient_name = file.stem
+        df = pd.read_csv(file, index_col=0)
+        patient_snps[patient_name] = df.columns.tolist()
+    return patient_snps
+
+def get_rank_per_patient2(graph, sorted_genes):
+    patient_genes = load_patient_snps()
+    for patient in patient_genes.keys():
+        patient_genes[patient] = list(set(patient_genes[patient]).intersection(sorted_genes))
+    sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes, genes) for
+                            patient, genes in patient_genes.items()}
+    return sorted_patient_genes
+
+
 def sort_list_by_reference(reference_list, unordered_list):
     return sorted(unordered_list, key=reference_list.index)
