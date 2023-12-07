@@ -5,7 +5,7 @@ from WeightedBiPartideGraphMatching.MatchingDataHandler import MatchingDataHandl
 from WeightedBiPartideGraphMatching.MatchingSolver import MatchingSolver
 from WeightedBiPartideGraphMatching.MatchingVisualizer import *
 
-SHOULD_CALC_NEW_GRAPH = False
+SHOULD_CALC_NEW_GRAPH = True
 
 if __name__ == '__main__':
     if SHOULD_CALC_NEW_GRAPH:
@@ -35,7 +35,7 @@ if __name__ == '__main__':
             json.dump(gene_weights, f)
 
         # for sub graphing
-        patients_with_ranked_genes_by_weight = get_rank_per_patient2(new_graph, sorted_gene_names_by_weight)
+        patients_with_ranked_genes_by_weight = get_rank_per_patient(new_graph, sorted_gene_names_by_weight)
         with open('./patients_with_ranked_genes_by_weight.json', 'w+') as f:
             json.dump(patients_with_ranked_genes_by_weight, f)
         k = 20
