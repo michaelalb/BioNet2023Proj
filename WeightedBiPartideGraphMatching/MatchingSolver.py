@@ -5,7 +5,7 @@ import pickle
 
 from WeightedBiPartideGraphMatching.GraphHandlers import create_new_bipartite_graph
 
-
+NEW_GENE_PENEALTY = 0.05
 class MatchingSolver:
 
     def _custom_sort(self, t):
@@ -94,10 +94,9 @@ class MatchingSolver:
         print("node_penealties generation")
         for i,gene in enumerate(gene_nodes):
             covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * (1/number_of_patients) for (gene1, patient_name) in gene_patient_paires if gene == gene1])
-            node_penealties.append((0.05)*(1 - covered_patients))
+            node_penealties.append(NEW_GENE_PENEALTY*(1 - covered_patients))
             if(i%100 == 0):
                 print(f"done {i} out of {len(gene_nodes)}")
-                print(node_penealties[i])
         prob += (edge_wights - lpSum(node_penealties))
         # Constraints
         # Constraint - 1 : Edge-Vertex relationship
