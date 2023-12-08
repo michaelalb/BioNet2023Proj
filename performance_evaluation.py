@@ -1,4 +1,3 @@
-import seaborn as sns
 import json
 import numpy as np
 import pandas as pd
@@ -7,6 +6,8 @@ from pathlib import Path
 import seaborn as sns
 
 TOP_X = 20
+
+
 def calculate_precision(ranked_list, gold_standard):
     precision_vector = []
     for i in range(1, len(ranked_list) + 1):
@@ -14,6 +15,7 @@ def calculate_precision(ranked_list, gold_standard):
         precision_vector.append(intersection / i)
     precision_vector.extend([precision_vector[-1]] * max(0, 100 - len(ranked_list)))
     return precision_vector
+
 
 def calculate_recall(ranked_list, gold_standard):
     recall_vector = []
@@ -23,6 +25,7 @@ def calculate_recall(ranked_list, gold_standard):
     recall_vector.extend([recall_vector[-1]] * max(0, 100 - len(ranked_list)))
     return recall_vector
 
+
 def load_patient_snps():
     patient_snps = {}
     for file in Path('Data/DriverMaxSetApproximation/BaseData').glob('*.csv'):
@@ -30,6 +33,7 @@ def load_patient_snps():
         df = pd.read_csv(file, index_col=0)
         patient_snps[patient_name] = df.columns.tolist()
     return patient_snps
+
 
 def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
     precision_matrices = {}
@@ -71,6 +75,7 @@ def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
         "f1": f1_means
     }
 
+
 def plot_performances(performances):
     sns.set()
     figure, axis = plt.subplots(1, 3, figsize=(16,9))
@@ -106,46 +111,48 @@ def plot_performances(performances):
     figure.legend(handles, labels, loc='lower center')
     plt.show()
 
-print("loading data")
-patient_snps = load_patient_snps()
-ranked_genes_lists = json.load(open('./patients_with_ranked_genes_by_weight.json'))
-gene_wights = json.load(open('./gene_weights.json'))
-wight_per_rank = {}
-for patient in ranked_genes_lists.keys():
-    for i, gene in enumerate(ranked_genes_lists[patient]):
-        if i >= TOP_X:
-            break
-        wight_per_rank[i+1] = wight_per_rank.get(i+1, []) + [gene_wights.get(gene,0)]
+
+if __name__ == '__main__':
+    print("loading data")
+    patient_snps = load_patient_snps()
+    ranked_genes_lists = json.load(open('./patients_with_ranked_genes_by_weight.json'))
+    gene_wights = json.load(open('./gene_weights.json'))
+    wight_per_rank = {}
+    for patient in ranked_genes_lists.keys():
+        for i, gene in enumerate(ranked_genes_lists[patient]):
+            if i >= TOP_X:
+                break
+            wight_per_rank[i+1] = wight_per_rank.get(i+1, []) + [gene_wights.get(gene,0)]
 
 
-#box plot of weights per rank
-keys = list(wight_per_rank.keys())
-values = list(wight_per_rank.values())
+    #box plot of weights per rank
+    keys = list(wight_per_rank.keys())
+    values = list(wight_per_rank.values())
 
-#Create a box plot
-plt.boxplot(values, labels=keys)
-plt.xlabel('Rank')
-plt.ylabel('Weight')
-plt.title('Gene Weights per Rank')
-plt.grid(True)
-plt.show()
+    #Create a box plot
+    plt.boxplot(values, labels=keys)
+    plt.xlabel('Rank')
+    plt.ylabel('Weight')
+    plt.title('Gene Weights per Rank')
+    plt.grid(True)
+    plt.show()
 
 
-PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
-# global_ranked_genes_lists = json.load(open('./sorted_gene_names_by_weight.json'))
-# global_ranked_genes_lists
-gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
-print("calculating performances")
-our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
-PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
+    PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
+    # global_ranked_genes_lists = json.load(open('./sorted_gene_names_by_weight.json'))
+    # global_ranked_genes_lists
+    gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
+    print("calculating performances")
+    our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
+    PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
 
-# global_performances = check_performances({'TCGA.A6.2671.01':global_ranked_genes_lists}, patient_snps, gold_standard_drivers)
-plot_performances({'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances})#, 'global': global_performances})
+    # global_performances = check_performances({'TCGA.A6.2671.01':global_ranked_genes_lists}, patient_snps, gold_standard_drivers)
+    plot_performances({'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances})#, 'global': global_performances})
 
-# df = pd.DataFrame()
-# for patient in set(our_performances['recall'].keys()).intersection(PRODIGY_performances['recall'].keys()) :
-#     res = {}
-#     for i in range(min(min(TOP_X, len(our_performances['recall'][patient])), len(PRODIGY_performances['recall'][patient]))):
-#         res[i] = our_performances['recall'][patient][i] - PRODIGY_performances['recall'][patient][i]
-#     df[patient] = pd.Series(res)
-# df.T.to_csv('diff.csv')
+    # df = pd.DataFrame()
+    # for patient in set(our_performances['recall'].keys()).intersection(PRODIGY_performances['recall'].keys()) :
+    #     res = {}
+    #     for i in range(min(min(TOP_X, len(our_performances['recall'][patient])), len(PRODIGY_performances['recall'][patient]))):
+    #         res[i] = our_performances['recall'][patient][i] - PRODIGY_performances['recall'][patient][i]
+    #     df[patient] = pd.Series(res)
+    # df.T.to_csv('diff.csv')

@@ -146,8 +146,8 @@ def load_patient_snps():
     return patient_snps
 
 
-def get_rank_per_patient_from_base_data(sorted_genes):
-    patient_genes = load_patient_snps()
+def get_rank_per_patient_from_base_data(sorted_genes, patient_genes=None):
+    patient_genes = load_patient_snps() if patient_genes is None else patient_genes
     for patient in patient_genes.keys():
         patient_genes[patient] = list(set(patient_genes[patient]).intersection(sorted_genes))
     sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes, genes) for

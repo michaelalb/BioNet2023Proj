@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pulp import LpProblem, LpVariable, lpSum, LpInteger, LpMaximize
 import json
 import networkx as nx
@@ -5,7 +7,7 @@ import pickle
 
 from WeightedBiPartideGraphMatching.GraphHandlers import create_new_bipartite_graph
 
-NEW_GENE_PENEALTY = 0.05
+
 class MatchingSolver:
 
     def _custom_sort(self, t):
@@ -46,7 +48,7 @@ class MatchingSolver:
 
     def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
-                               new_graph):
+                               new_graph, should_save_files=True):
         # print optimization results
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
         print(f"total weight: {prob.objective.value()}")
@@ -62,13 +64,14 @@ class MatchingSolver:
             'total_weight': prob.objective.value(),
             'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
         }
-        with open('./cover_set.json', 'w+') as f:
-            json.dump(data, f)
+        if should_save_files:
+            with open('./cover_set.json', 'w+') as f:
+                json.dump(data, f)
 
-        with open('./new_graph.pkl', 'wb+') as f:
-            pickle.dump(new_graph, f)
+            with open('./new_graph.pkl', 'wb+') as f:
+                pickle.dump(new_graph, f)
 
-    def find_min_cover_set(self, graph: nx.Graph):
+    def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True):
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
 
         # Create a binary variable to state that a node is included in the cover
@@ -84,52 +87,51 @@ class MatchingSolver:
         gene_nodes = LpVariable.dicts("y", bottom_nodes, 0, 1, LpInteger)
         gene_patient_nodes = LpVariable.dicts("z", gene_patient_paires, 0, 1, LpInteger)
         edges = LpVariable.dicts("e", sorted_edges, 0, 1, LpInteger)
-        number_of_patients = len(set([patient_name for (patient_name, pathway) in top_nodes]))
-        print("done with ILP vars")
+        # number_of_patients = len(set([patient_name for (patient_name, pathway) in top_nodes]))
+        print("Done creating ILP vars")
         # Objective function
-        print("objective function")
+        print("Creating objective function")
         print("edge_wights generation")
         edge_wights = lpSum([edges[(n, n1)] * abs(d['weight']) for n, n1, d in sorted_edges_data])
         node_penealties = []
-        print("node_penealties generation")
-        for i,gene in enumerate(gene_nodes):
-            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * (1/number_of_patients) for (gene1, patient_name) in gene_patient_paires if gene == gene1])
-            node_penealties.append(NEW_GENE_PENEALTY*(1 - covered_patients))
-            if(i%100 == 0):
-                print(f"done {i} out of {len(gene_nodes)}")
-        prob += (edge_wights - lpSum(node_penealties))
         # Constraints
-        # Constraint - 1 : Edge-Vertex relationship
-        print("Constraint - 1 : Edge-Vertex relationship")
+        # Constraint - 1 : Adding A new gene penalty
+        print("Constraint - 1 : Node penalties generation - For each new gene considered,"
+              " add a penalty which is proportional to the number of patients it covers")
+        for i, gene in enumerate(gene_nodes):
+            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * (1/10) for (gene1, patient_name) in gene_patient_paires if gene == gene1])
+            node_penealties.append(new_gene_penalty * (1 - covered_patients))
+        prob += (edge_wights - lpSum(node_penealties))
+        # Constraint - 2 : Edge-Vertex relationship
+        print("Constraint - 2 : Edge-Vertex relationship")
         for (gene_node, pathway_node) in sorted_edges:
             # goes over edges so that pathway nodes are first, then gene nodes
             # if we choose an edge both bottom and top nodes must be chosen
             prob += edges[(gene_node, pathway_node)] <= patient_pathway_nodes[pathway_node]
             prob += edges[(gene_node, pathway_node)] <= gene_nodes[gene_node]
 
-        # Constraint - 2 : for each pathway node only one gene node can be chosen
-        print("Constraint - 2 : for each pathway node only one gene node can be chosen")
+        # Constraint - 3 : for each pathway node only one gene node can be chosen
+        print("Constraint - 3 : for each pathway node only one gene node can be chosen")
         for pathway_node in top_nodes:
             prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= 1
 
-        # Constraint - 3 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen
-        print("Constraint - 3 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen")
+        # Constraint - 4 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen
+        print("Constraint - 4 "
+              ": for each gene and patient pair, if any pathway node is chosen, the patient must be chosen")
         for (gene, (patient_name, pathway)) in sorted_edges:
             prob += gene_patient_nodes[(gene, patient_name)] >= edges[(gene, (patient_name, pathway))]
-                
 
-
-        # Constraint - 4 : dont allow disconnected nodes
-        print("Constraint - 4 : dont allow disconnected nodes")
-        print("top nodes")
+        # Constraint - 5 : dont allow disconnected nodes
+        print("Constraint - 5 : dont allow disconnected nodes")
+        print("Creating constraint for top nodes")
         for node in top_nodes:
             node_edges = [edge for edge in sorted_edges if node in edge]
             prob += lpSum([edges[edge] for edge in node_edges]) >= patient_pathway_nodes[node]
-        print("bottom nodes")
+        print("Creating constraint for bottom nodes")
         for node in bottom_nodes:
             node_edges = [edge for edge in sorted_edges if node in edge]
             prob += lpSum([edges[edge] for edge in node_edges]) >= gene_nodes[node]
-        print("done with ILP constraints")
+        print(f"Done creating ILP constraints - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
         print("solving")
         prob.solve()
 
@@ -141,6 +143,7 @@ class MatchingSolver:
         new_graph = create_new_bipartite_graph(bottom_cover_set, top_cover_set, chosen_edges)
 
         self.print_and_save_ILP_res(bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
-                                    sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph)
+                                    sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph,
+                                    should_save_files=should_save_files)
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
