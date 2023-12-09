@@ -73,22 +73,24 @@ def get_sorted_genes_by_wight(optimized_graph: nx.Graph = None, should_save_file
 #     # return top_k_sub_graph, patients_with_ranked_genes_by_weight
 #     return patients_with_ranked_genes_by_weight
 
+def get_param_range(param_limits: dict, total_number_of_steps: int,
+                    param_name: str = 'gene_param'):
+    if param_limits[param_name].get('strict_vals') is not None:
+        return param_limits[param_name]['strict_vals']
+    param_range = np.arange(param_limits[param_name]['left_bound'],
+                            param_limits[param_name]['right_bound'],
+                            param_limits[param_name]['step_size'])
+    if len(param_range) > total_number_of_steps:
+        param_range = np.linspace(param_limits[param_name]['left_bound'],
+                                  param_limits[param_name]['right_bound'],
+                                  total_number_of_steps)
+    return param_range
+
 
 def set_up_param_ranges(param_limits: dict, total_number_of_steps: int):
-    gene_param_range = np.arange(param_limits['gene_param']['left_bound'],
-                                 param_limits['gene_param']['right_bound'],
-                                 param_limits['gene_param']['step_size'])
-    gene_penalty_patient_discount_range = np.arange(param_limits['gene_penalty_patient_discount']['left_bound'],
-                                                    param_limits['gene_penalty_patient_discount']['right_bound'],
-                                                    param_limits['gene_penalty_patient_discount']['step_size'])
-    if len(gene_param_range) > total_number_of_steps:
-        gene_param_range = np.linspace(param_limits['gene_param']['left_bound'],
-                                       param_limits['gene_param']['right_bound'],
-                                       total_number_of_steps)
-    if len(gene_penalty_patient_discount_range) > total_number_of_steps:
-        gene_penalty_patient_discount_range = np.linspace(param_limits['gene_penalty_patient_discount']['left_bound'],
-                                                          param_limits['gene_penalty_patient_discount']['right_bound'],
-                                                          total_number_of_steps)
+    gene_param_range = get_param_range(param_limits, total_number_of_steps, 'gene_param')
+    gene_penalty_patient_discount_range = get_param_range(param_limits, total_number_of_steps,
+                                                          'gene_penalty_patient_discount')
     return gene_param_range, gene_penalty_patient_discount_range
 
 
@@ -123,14 +125,16 @@ def param_search(param_limits: dict,
             with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
                 json.dump(ranked_genes_lists, f)
             our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
-            steps_dict['search_results'][(gene_param, gene_penalty_patient_discount_param)] = {
+            target_performance = our_performances['precision'][gene_number_to_optimize - 1]
+            steps_dict['search_results'][str((gene_param, gene_penalty_patient_discount_param))] = {
                 "gene_param": gene_param,
                 "gene_penalty_patient_discount_param": gene_penalty_patient_discount_param,
-                'precision': our_performances['precision'],
-                'recall': our_performances['recall'],
-                'f1': our_performances['f1']
+                'precision': list(our_performances['precision']),
+                'recall': list(our_performances['recall']),
+                'f1': list(our_performances['f1']),
+                'target_performance': target_performance,
             }
-            target_performance = our_performances['precision'][gene_number_to_optimize]
+            target_performance = our_performances['precision'][gene_number_to_optimize - 1]
             print(f'performance for gene_param {gene_param} is {target_performance}')
             if target_performance > best_performance:
                 best_performance = target_performance
@@ -164,12 +168,14 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'gene_param':
             {
+                'strict_vals': [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 10],
                 'left_bound': 0.1,
                 'right_bound': 0.15,
                 'step_size': 0.05
             },
             "gene_penalty_patient_discount":
             {
+                'strict_vals': [0.5, 1/5, 1/10, 1/20, 1/50, 1/100, 1/200],
                 'left_bound': 0.1,
                 'right_bound': 0.15,
                 'step_size': 0.05
@@ -180,3 +186,8 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
 
 if __name__ == '__main__':
     main(should_perform_param_search=True)
+    # todo:
+    #  2. add patient ranking only from what existed in ILP
+    #  3. gene ranking should be by ILP weights
+    #  4. merge data fix
+    #  5. Run param search
