@@ -142,6 +142,9 @@ class MatchingSolver:
         bottom_cover_set, top_cover_set, cover_set, not_cover_set, chosen_edges = self.get_nodes_edges_from_ILP_res(
             graph, sorted_edges_data, edges, patient_pathway_nodes, gene_nodes, bottom_nodes, top_nodes)
 
+        # get adjusted gene weights
+        gene_weights = self._get_gene_weights_by_penalty(chosen_edges, new_gene_penalty, gene_penalty_patient_discount)
+
         # create new graph with only the chosen edges
         new_graph = create_new_bipartite_graph(bottom_cover_set, top_cover_set, chosen_edges)
 
@@ -150,3 +153,28 @@ class MatchingSolver:
                                     should_save_files=should_save_files, base_path=base_path)
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
+
+    def _get_gene_weights_by_penalty(self, chosen_edges: list, gene_penalty: float,
+                                     patient_discount: float):
+        gene_weights = {}
+        gene_patient_counts = {}
+        adjusted_gene_weights = {}
+        for edge in chosen_edges:
+            if isinstance(edge[0], str):
+                gene = edge[0]
+                patient = edge[1][0]
+            else:
+                gene = edge[1]
+                patient = edge[0][0]
+            if gene not in gene_weights:
+                gene_weights[gene] = 0
+                gene_patient_counts[gene] = []
+            gene_weights[gene] += edge[2]['weight']
+            gene_patient_counts[gene].append(patient)
+
+        for gene in gene_weights:
+            number_of_covered_patients = len(set(gene_patient_counts[gene]))
+            current_gene_discount = number_of_covered_patients * patient_discount
+            current_gene_penalty = gene_penalty * (1 - current_gene_discount)
+            adjusted_gene_weights[gene] = gene_weights[gene] - gene_penalty * len(gene_patient_counts[gene]) * patient_discount
+        return adjusted_gene_weights

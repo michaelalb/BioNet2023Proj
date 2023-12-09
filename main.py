@@ -121,7 +121,9 @@ def param_search(param_limits: dict,
 
             sorted_gene_names_by_weight, gene_weights = get_sorted_genes_by_wight(new_graph, should_save_files=True,
                                                                                   base_path=str(current_run_path))
-            ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight, patient_snps)
+            optimized_patient_genes = get_patient_genes_from_graph(new_graph)
+            ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
+                                                                     optimized_patient_genes)
             with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
                 json.dump(ranked_genes_lists, f)
             our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
@@ -168,14 +170,14 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'gene_param':
             {
-                'strict_vals': [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 10],
+                'strict_vals': [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 10, 50],
                 'left_bound': 0.1,
                 'right_bound': 0.15,
                 'step_size': 0.05
             },
             "gene_penalty_patient_discount":
             {
-                'strict_vals': [0.5, 1/5, 1/10, 1/20, 1/50, 1/100, 1/200],
+                'strict_vals': [1, 0.5, 1/5, 1/10, 1/20, 1/50, 1/100, 1/200],
                 'left_bound': 0.1,
                 'right_bound': 0.15,
                 'step_size': 0.05

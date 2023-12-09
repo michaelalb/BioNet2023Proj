@@ -101,11 +101,9 @@ def get_pathway_names_from_graph(graph):
     return pathway_names
 
 
-def get_rank_per_patient_from_graph(graph, sorted_genes):
+def get_patient_genes_from_graph(graph):
     patient_names = get_patient_names_from_graph(graph)
-    # PRODIGY_ranking = json.load(open('Data//PRODIGY_results.json'))
     patient_genes = {}
-    # all_patient_genes = load_patient_snps()
     # get all patient genes
     for patient_name in patient_names:
         patient_genes[patient_name] = []
@@ -114,16 +112,14 @@ def get_rank_per_patient_from_graph(graph, sorted_genes):
                 gene = [i for i in graph.neighbors(node)]
                 assert len(gene) == 1
                 gene = gene[0]
-                # w = abs(graph.get_edge_data(node, gene)['weight'])
                 patient_genes[patient_name].append(gene)
-        # print('***************')
-        # print(patient_name)
-        # print([(gene,w) for gene, w in sorted(patient_genes[patient_name], key=lambda x: x[1], reverse=True)])
-        # patient_genes[patient_name] = list(dict.fromkeys([gene for gene, w in sorted(patient_genes[patient_name], key=lambda x: x[1], reverse=True)]))
-        # print(patient_genes[patient_name])
-        # print('***************')
         patient_genes[patient_name] = list(set(patient_genes[patient_name]))
-    sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes,genes) for
+    return patient_genes
+
+
+def get_rank_per_patient_from_graph(graph, sorted_genes):
+    patient_genes = get_patient_genes_from_graph(graph)
+    sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes, genes) for
                             patient, genes in patient_genes.items()}
     # for patient in patient_genes.keys():
     #     missing_genes = set(all_patient_genes[patient]).difference(set(patient_genes[patient]))
