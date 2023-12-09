@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from pulp import LpProblem, LpVariable, lpSum, LpInteger, LpMaximize
 import json
@@ -48,7 +49,7 @@ class MatchingSolver:
 
     def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
-                               new_graph, should_save_files=True):
+                               new_graph, should_save_files=True, base_path='./'):
         # print optimization results
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
         print(f"total weight: {prob.objective.value()}")
@@ -65,13 +66,14 @@ class MatchingSolver:
             'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
         }
         if should_save_files:
-            with open('./cover_set.json', 'w+') as f:
+            with open(str(Path(base_path) / f'cover_set.json'), 'w+') as f:
                 json.dump(data, f)
 
-            with open('./new_graph.pkl', 'wb+') as f:
+            with open(str(Path(base_path) / 'new_graph.pkl'), 'wb+') as f:
                 pickle.dump(new_graph, f)
 
-    def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True):
+    def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True,
+                           gene_penalty_patient_discount: float = 0.1, base_path='./'):
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
 
         # Create a binary variable to state that a node is included in the cover
@@ -81,11 +83,11 @@ class MatchingSolver:
         top_nodes = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 0]
         bottom_nodes = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 1]
         print("gene_patient_paires generation")
-        gene_patient_paires = list(set([(gene, patient_name) for (gene,(patient_name, pathway)) in sorted_edges]))
+        gene_patient_pairs = list(set([(gene, patient_name) for (gene, (patient_name, pathway)) in sorted_edges]))
         print("patient_pathway_nodes generation")
         patient_pathway_nodes = LpVariable.dicts("x", top_nodes, 0, 1, LpInteger)
         gene_nodes = LpVariable.dicts("y", bottom_nodes, 0, 1, LpInteger)
-        gene_patient_nodes = LpVariable.dicts("z", gene_patient_paires, 0, 1, LpInteger)
+        gene_patient_nodes = LpVariable.dicts("z", gene_patient_pairs, 0, 1, LpInteger)
         edges = LpVariable.dicts("e", sorted_edges, 0, 1, LpInteger)
         # number_of_patients = len(set([patient_name for (patient_name, pathway) in top_nodes]))
         print("Done creating ILP vars")
@@ -99,7 +101,8 @@ class MatchingSolver:
         print("Constraint - 1 : Node penalties generation - For each new gene considered,"
               " add a penalty which is proportional to the number of patients it covers")
         for i, gene in enumerate(gene_nodes):
-            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * (1/10) for (gene1, patient_name) in gene_patient_paires if gene == gene1])
+            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * gene_penalty_patient_discount
+                                      for (gene1, patient_name) in gene_patient_pairs if gene == gene1])
             node_penealties.append(new_gene_penalty * (1 - covered_patients))
         prob += (edge_wights - lpSum(node_penealties))
         # Constraint - 2 : Edge-Vertex relationship
@@ -144,6 +147,6 @@ class MatchingSolver:
 
         self.print_and_save_ILP_res(bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                     sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph,
-                                    should_save_files=should_save_files)
+                                    should_save_files=should_save_files, base_path=base_path)
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
