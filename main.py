@@ -27,17 +27,19 @@ def run_ilp_analysis(path_to_data: str,
     if should_draw_graph:
         draw_graph(orig_graph, save=True, name='before.png')
     print(f"finding min cover set - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
-    cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph = matching_solver.find_min_cover_set(
-        orig_graph, new_gene_penalty, should_save_files=should_save_files,
-        gene_penalty_patient_discount=gene_penalty_patient_discount, base_path=base_path)
+    cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, adjusted_gene_weights =\
+        matching_solver.find_min_cover_set(orig_graph, new_gene_penalty,
+                                           should_save_files=should_save_files,
+                                           gene_penalty_patient_discount=gene_penalty_patient_discount,
+                                           base_path=base_path)
     print(f"saving optimized graph picture - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
     if should_draw_graph:
         draw_graph(new_graph, save=True, name='after.png')
-    return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph
+    return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights
 
 
-def get_sorted_genes_by_wight(optimized_graph: nx.Graph = None, should_save_files: bool = True,
-                              base_path: str = './'):
+def get_sorted_genes_by_wight_from_graph(optimized_graph: nx.Graph = None, should_save_files: bool = True,
+                                         base_path: str = './'):
     print(f'calculating gene weights - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
     print(f'loading graph - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
     new_graph = load_graph_from_file('new_graph.pkl') if optimized_graph is None else optimized_graph
@@ -50,6 +52,17 @@ def get_sorted_genes_by_wight(optimized_graph: nx.Graph = None, should_save_file
         with open(str(Path(base_path) / 'gene_weights.json'), 'w+') as f:
             json.dump(gene_weights, f)
     return sorted_gene_names_by_weight, gene_weights
+
+
+def get_sorted_genes_by_wight_from_dict(optimized_gene_weights: dict, should_save_files: bool = True,
+                                        base_path: str = './'):
+    print(f'calculating gene weights - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
+    sorted_gene_names_by_weight = sorted(optimized_gene_weights,
+                                         key=lambda x: optimized_gene_weights.get(x), reverse=True)
+    if should_save_files:
+        with open(str(Path(base_path) / 'sorted_gene_names_by_weight.json'), 'w+') as f:
+            json.dump(sorted_gene_names_by_weight, f)
+    return sorted_gene_names_by_weight
 
 
 # def get_graph_with_top_k_edges_from_graph_by_weight_sum(optimized_graph: nx.Graph, k: int,
@@ -111,7 +124,7 @@ def param_search(param_limits: dict,
             current_run_path.mkdir(parents=True, exist_ok=True)
             print(f'Optimizing {gene_param=} - {gene_penalty_patient_discount_param=}'
                   f' - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-            cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph = \
+            cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
                 run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
                                  should_draw_graph=False,
                                  new_gene_penalty=gene_param,
@@ -119,8 +132,9 @@ def param_search(param_limits: dict,
                                  gene_penalty_patient_discount=gene_penalty_patient_discount_param,
                                  base_path=str(current_run_path))
 
-            sorted_gene_names_by_weight, gene_weights = get_sorted_genes_by_wight(new_graph, should_save_files=True,
-                                                                                  base_path=str(current_run_path))
+            sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
+                                                                              should_save_files=True,
+                                                                              base_path=str(current_run_path))
             optimized_patient_genes = get_patient_genes_from_graph(new_graph)
             ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
                                                                      optimized_patient_genes)
@@ -154,7 +168,7 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
          gene_weights: dict = None, new_graph: nx.Graph = None,
          k: int = 20, should_perform_param_search: bool = False):
     if should_calc_optimized_graph:
-        cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph = \
+        cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
             run_ilp_analysis(path_to_data=path_to_base_data,
                              should_draw_graph=should_draw_graph)
     if should_calc_gene_weights:
@@ -169,27 +183,22 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         # for param search
         param_limits = {
             'gene_param':
-            {
-                'strict_vals': [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 10, 50],
-                'left_bound': 0.1,
-                'right_bound': 0.15,
-                'step_size': 0.05
-            },
+                {
+                    'strict_vals': [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 10, 50],
+                    'left_bound': 0.1,
+                    'right_bound': 0.15,
+                    'step_size': 0.05
+                },
             "gene_penalty_patient_discount":
-            {
-                'strict_vals': [1, 0.5, 1/5, 1/10, 1/20, 1/50, 1/100, 1/200],
-                'left_bound': 0.1,
-                'right_bound': 0.15,
-                'step_size': 0.05
-            }
+                {
+                    'strict_vals': [1, 0.5, 1 / 5, 1 / 10, 1 / 20, 1 / 50, 1 / 100, 1 / 200],
+                    'left_bound': 0.1,
+                    'right_bound': 0.15,
+                    'step_size': 0.05
+                }
         }
         param_search(param_limits=param_limits, gene_number_to_optimize=5, total_number_of_steps=50)
 
 
 if __name__ == '__main__':
     main(should_perform_param_search=True)
-    # todo:
-    #  2. add patient ranking only from what existed in ILP
-    #  3. gene ranking should be by ILP weights
-    #  4. merge data fix
-    #  5. Run param search

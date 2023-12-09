@@ -49,7 +49,8 @@ class MatchingSolver:
 
     def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
-                               new_graph, should_save_files=True, base_path='./'):
+                               new_graph, gene_weights, gene_adjustments,
+                               should_save_files=True, base_path='./'):
         # print optimization results
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
         print(f"total weight: {prob.objective.value()}")
@@ -63,7 +64,9 @@ class MatchingSolver:
             'chosen_edges': chosen_edges,
             'not_cover_set': not_cover_set,
             'total_weight': prob.objective.value(),
-            'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
+            'adjusted_gene_weights': gene_weights,
+            'gene_adjustments': gene_adjustments,
+            'total_sum_of_original_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
         }
         if should_save_files:
             with open(str(Path(base_path) / f'cover_set.json'), 'w+') as f:
@@ -143,22 +146,25 @@ class MatchingSolver:
             graph, sorted_edges_data, edges, patient_pathway_nodes, gene_nodes, bottom_nodes, top_nodes)
 
         # get adjusted gene weights
-        gene_weights = self._get_gene_weights_by_penalty(chosen_edges, new_gene_penalty, gene_penalty_patient_discount)
+        gene_weights, gene_adjustments = self._get_gene_weights_by_penalty(
+            chosen_edges, new_gene_penalty, gene_penalty_patient_discount)
 
         # create new graph with only the chosen edges
         new_graph = create_new_bipartite_graph(bottom_cover_set, top_cover_set, chosen_edges)
 
         self.print_and_save_ILP_res(bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                     sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph,
+                                    gene_weights, gene_adjustments,
                                     should_save_files=should_save_files, base_path=base_path)
 
-        return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
+        return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, gene_weights
 
     def _get_gene_weights_by_penalty(self, chosen_edges: list, gene_penalty: float,
                                      patient_discount: float):
         gene_weights = {}
         gene_patient_counts = {}
         adjusted_gene_weights = {}
+        gene_adjustments = {}
         for edge in chosen_edges:
             if isinstance(edge[0], str):
                 gene = edge[0]
@@ -176,5 +182,6 @@ class MatchingSolver:
             number_of_covered_patients = len(set(gene_patient_counts[gene]))
             current_gene_discount = number_of_covered_patients * patient_discount
             current_gene_penalty = gene_penalty * (1 - current_gene_discount)
-            adjusted_gene_weights[gene] = gene_weights[gene] - gene_penalty * len(gene_patient_counts[gene]) * patient_discount
-        return adjusted_gene_weights
+            adjusted_gene_weights[gene] = gene_weights.get(gene) - current_gene_penalty
+            gene_adjustments[gene] = current_gene_penalty
+        return adjusted_gene_weights, gene_adjustments
