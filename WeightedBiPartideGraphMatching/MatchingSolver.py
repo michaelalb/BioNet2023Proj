@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from pulp import LpProblem, LpVariable, lpSum, LpInteger, LpMaximize
 import json
@@ -48,7 +49,7 @@ class MatchingSolver:
 
     def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
-                               new_graph, should_save_files=True):
+                               new_graph, should_save_files=True, base_path='./'):
         # print optimization results
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
         print(f"total weight: {prob.objective.value()}")
@@ -65,14 +66,14 @@ class MatchingSolver:
             'total_sum_of_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
         }
         if should_save_files:
-            with open('./cover_set.json', 'w+') as f:
+            with open(str(Path(base_path) / f'cover_set.json'), 'w+') as f:
                 json.dump(data, f)
 
-            with open('./new_graph.pkl', 'wb+') as f:
+            with open(str(Path(base_path) / 'new_graph.pkl'), 'wb+') as f:
                 pickle.dump(new_graph, f)
 
     def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True,
-                           gene_penalty_patient_discount: float = 0.1):
+                           gene_penalty_patient_discount: float = 0.1, base_path='./'):
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
 
         # Create a binary variable to state that a node is included in the cover
@@ -146,6 +147,6 @@ class MatchingSolver:
 
         self.print_and_save_ILP_res(bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                     sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph,
-                                    should_save_files=should_save_files)
+                                    should_save_files=should_save_files, base_path=base_path)
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph
