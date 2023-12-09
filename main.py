@@ -13,7 +13,8 @@ from performance_evaluation import check_performances
 def run_ilp_analysis(path_to_data: str,
                      should_draw_graph: bool,
                      new_gene_penalty: float = 0.2,
-                     should_save_files: bool = True):
+                     should_save_files: bool = True,
+                     gene_penalty_patient_discount: float = 0.1):
     matching_data_handler = MatchingDataHandler(path_to_data)
     print(f'loading data - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
     matching_data_handler.load_data()
@@ -25,7 +26,8 @@ def run_ilp_analysis(path_to_data: str,
         draw_graph(orig_graph, save=True, name='before.png')
     print(f"finding min cover set - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
     cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph = matching_solver.find_min_cover_set(
-        orig_graph, new_gene_penalty, should_save_files=should_save_files)
+        orig_graph, new_gene_penalty, should_save_files=should_save_files,
+        gene_penalty_patient_discount=gene_penalty_patient_discount)
     print(f"saving optimized graph picture - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
     if should_draw_graph:
         draw_graph(new_graph, save=True, name='after.png')
@@ -69,40 +71,63 @@ def get_sorted_genes_by_wight(optimized_graph: nx.Graph = None, should_save_file
 #     return patients_with_ranked_genes_by_weight
 
 
-def param_search(gene_number_to_optimize: int = 5, total_number_of_steps: int = 50):
-    steps_dict = {'gene_param': {},
+def set_up_param_ranges(param_limits: dict, total_number_of_steps: int):
+    gene_param_range = np.linspace(param_limits['gene_param']['left_bound'],
+                                   param_limits['gene_param']['right_bound'],
+                                   param_limits['gene_param']['step_size'])
+    gene_penalty_patient_discount_range = np.linspace(param_limits['gene_penalty_patient_discount']['left_bound'],
+                                                      param_limits['gene_penalty_patient_discount']['right_bound'],
+                                                      param_limits['gene_penalty_patient_discount']['step_size'])
+    if len(gene_param_range) > total_number_of_steps:
+        gene_param_range = np.linspace(param_limits['gene_param']['left_bound'],
+                                       param_limits['gene_param']['right_bound'],
+                                       total_number_of_steps)
+    if len(gene_penalty_patient_discount_range) > total_number_of_steps:
+        gene_penalty_patient_discount_range = np.linspace(param_limits['gene_penalty_patient_discount']['left_bound'],
+                                                          param_limits['gene_penalty_patient_discount']['right_bound'],
+                                                          total_number_of_steps)
+    return gene_param_range, gene_penalty_patient_discount_range
+
+
+def param_search(param_limits: dict,
+                 gene_number_to_optimize: int = 5, total_number_of_steps: int = 50):
+    steps_dict = {'search_results': {},
                   "gene_number_to_optimize": gene_number_to_optimize}
-    right_bound = 0.5
-    left_bound = 0.1
-    best_performance_param = 0.2
-    best_performance = 0
-    step_size = 0.05
+    gene_param_range, gene_penalty_patient_discount_range = set_up_param_ranges(param_limits, total_number_of_steps)
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
     patient_snps = load_patient_snps()
+    best_performance, best_performance_gene_param, best_performance_gene_penalty_patient_discount_param = 0, 0, 0
 
-    for gene_param in np.arange(left_bound, right_bound, step_size):
-        print(f'Optimizing gene_param: {gene_param}')
-        cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph = \
-            run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
-                             should_draw_graph=False,
-                             new_gene_penalty=gene_param,
-                             should_save_files=False)
-        sorted_gene_names_by_weight, gene_weights = get_sorted_genes_by_wight(new_graph, should_save_files=False)
-        ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight, patient_snps)
-        our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
-        steps_dict['gene_param'][gene_param] = {
-            'precision': our_performances['precision'],
-            'recall': our_performances['recall'],
-            'f1': our_performances['f1']
-        }
-        target_performance = our_performances['precision'][gene_number_to_optimize]
-        print(f'performance for gene_param {gene_param} is {target_performance}')
-        if target_performance > best_performance:
-            best_performance = target_performance
-            best_performance_param = gene_param
+    for gene_param in gene_param_range:
+        for gene_penalty_patient_discount_param in gene_penalty_patient_discount_range:
+            print(f'Optimizing {gene_param=} - {gene_penalty_patient_discount_param=}'
+                  f' - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
+            cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph = \
+                run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
+                                 should_draw_graph=False,
+                                 new_gene_penalty=gene_param,
+                                 should_save_files=False,
+                                 gene_penalty_patient_discount=gene_penalty_patient_discount_param)
+            sorted_gene_names_by_weight, gene_weights = get_sorted_genes_by_wight(new_graph, should_save_files=False)
+            ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight, patient_snps)
+            our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
+            steps_dict['search_results'][(gene_param, gene_penalty_patient_discount_param)] = {
+                "gene_param": gene_param,
+                "gene_penalty_patient_discount_param": gene_penalty_patient_discount_param,
+                'precision': our_performances['precision'],
+                'recall': our_performances['recall'],
+                'f1': our_performances['f1']
+            }
+            target_performance = our_performances['precision'][gene_number_to_optimize]
+            print(f'performance for gene_param {gene_param} is {target_performance}')
+            if target_performance > best_performance:
+                best_performance = target_performance
+                best_performance_gene_param = gene_param
+                best_performance_gene_penalty_patient_discount_param = gene_penalty_patient_discount_param
     with open('./Data/DriverMaxSetApproximation/param_search.json', 'w+') as f:
         json.dump(steps_dict, f)
-    print(f'best param is {best_performance_param} with performance of {best_performance}')
+    print(f'best performance of {best_performance} - with params {best_performance_gene_param=}'
+          f' - {best_performance_gene_penalty_patient_discount_param=}')
     return steps_dict
 
 
@@ -124,7 +149,21 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
 
     if should_perform_param_search:
         # for param search
-        param_search()
+        param_limits = {
+            'gene_param':
+            {
+                'left_bound': 0.1,
+                'right_bound': 0.15,
+                'step_size': 0.05
+            },
+            "gene_penalty_patient_discount":
+            {
+                'left_bound': 0.1,
+                'right_bound': 0.15,
+                'step_size': 0.05
+            }
+        }
+        param_search(param_limits=param_limits, gene_number_to_optimize=5, total_number_of_steps=50)
 
 
 if __name__ == '__main__':

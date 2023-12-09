@@ -71,7 +71,8 @@ class MatchingSolver:
             with open('./new_graph.pkl', 'wb+') as f:
                 pickle.dump(new_graph, f)
 
-    def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True):
+    def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True,
+                           gene_penalty_patient_discount: float = 0.1):
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
 
         # Create a binary variable to state that a node is included in the cover
@@ -81,11 +82,11 @@ class MatchingSolver:
         top_nodes = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 0]
         bottom_nodes = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 1]
         print("gene_patient_paires generation")
-        gene_patient_paires = list(set([(gene, patient_name) for (gene,(patient_name, pathway)) in sorted_edges]))
+        gene_patient_pairs = list(set([(gene, patient_name) for (gene, (patient_name, pathway)) in sorted_edges]))
         print("patient_pathway_nodes generation")
         patient_pathway_nodes = LpVariable.dicts("x", top_nodes, 0, 1, LpInteger)
         gene_nodes = LpVariable.dicts("y", bottom_nodes, 0, 1, LpInteger)
-        gene_patient_nodes = LpVariable.dicts("z", gene_patient_paires, 0, 1, LpInteger)
+        gene_patient_nodes = LpVariable.dicts("z", gene_patient_pairs, 0, 1, LpInteger)
         edges = LpVariable.dicts("e", sorted_edges, 0, 1, LpInteger)
         # number_of_patients = len(set([patient_name for (patient_name, pathway) in top_nodes]))
         print("Done creating ILP vars")
@@ -99,7 +100,8 @@ class MatchingSolver:
         print("Constraint - 1 : Node penalties generation - For each new gene considered,"
               " add a penalty which is proportional to the number of patients it covers")
         for i, gene in enumerate(gene_nodes):
-            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * (1/10) for (gene1, patient_name) in gene_patient_paires if gene == gene1])
+            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * gene_penalty_patient_discount
+                                      for (gene1, patient_name) in gene_patient_pairs if gene == gene1])
             node_penealties.append(new_gene_penalty * (1 - covered_patients))
         prob += (edge_wights - lpSum(node_penealties))
         # Constraint - 2 : Edge-Vertex relationship
