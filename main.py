@@ -105,7 +105,7 @@ def param_search(param_limits: dict,
 
     for gene_param in gene_param_range:
         for gene_penalty_patient_discount_param in gene_penalty_patient_discount_range:
-            current_run_path = Path(base_run_path / f'{gene_param}_{gene_penalty_patient_discount_param}')
+            current_run_path = Path(base_run_path / f'{gene_param=}_{gene_penalty_patient_discount_param=}')
             current_run_path.mkdir(parents=True, exist_ok=True)
             print(f'Optimizing {gene_param=} - {gene_penalty_patient_discount_param=}'
                   f' - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
