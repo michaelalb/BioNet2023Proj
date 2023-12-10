@@ -48,9 +48,9 @@ def get_sorted_genes_by_wight_from_graph(optimized_graph: nx.Graph = None, shoul
     sorted_gene_names_by_weight = sorted(gene_weights, key=lambda x: gene_weights.get(x), reverse=True)
     if should_save_files:
         with open(str(Path(base_path) / 'sorted_gene_names_by_weight.json'), 'w+') as f:
-            json.dump(sorted_gene_names_by_weight, f)
+            json.dump(sorted_gene_names_by_weight, f, indent=4)
         with open(str(Path(base_path) / 'gene_weights.json'), 'w+') as f:
-            json.dump(gene_weights, f)
+            json.dump(gene_weights, f, indent=4)
     return sorted_gene_names_by_weight, gene_weights
 
 
@@ -61,7 +61,7 @@ def get_sorted_genes_by_wight_from_dict(optimized_gene_weights: dict, should_sav
                                          key=lambda x: optimized_gene_weights.get(x), reverse=True)
     if should_save_files:
         with open(str(Path(base_path) / 'sorted_gene_names_by_weight.json'), 'w+') as f:
-            json.dump(sorted_gene_names_by_weight, f)
+            json.dump(sorted_gene_names_by_weight, f, indent=4)
     return sorted_gene_names_by_weight
 
 
@@ -132,14 +132,17 @@ def param_search(param_limits: dict,
                                  gene_penalty_patient_discount=gene_penalty_patient_discount_param,
                                  base_path=str(current_run_path))
 
-            sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
-                                                                              should_save_files=True,
-                                                                              base_path=str(current_run_path))
-            optimized_patient_genes = get_patient_genes_from_graph(new_graph)
+            # sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
+            #                                                                   should_save_files=True,
+            #                                                                   base_path=str(current_run_path))
+            # optimized_patient_genes = get_patient_genes_from_graph(new_graph)
+            sorted_gene_names_by_weight, gene_weights = \
+                get_sorted_genes_by_wight_from_graph(new_graph, should_save_files=True, base_path=str(current_run_path))
+
             ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
-                                                                     optimized_patient_genes)
+                                                                     patient_snps)
             with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
-                json.dump(ranked_genes_lists, f)
+                json.dump(ranked_genes_lists, f, indent=4)
             our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
             target_performance = our_performances['precision'][gene_number_to_optimize - 1]
             steps_dict['search_results'][str((gene_param, gene_penalty_patient_discount_param))] = {
@@ -156,8 +159,10 @@ def param_search(param_limits: dict,
                 best_performance = target_performance
                 best_performance_gene_param = gene_param
                 best_performance_gene_penalty_patient_discount_param = gene_penalty_patient_discount_param
+            with open(str(base_run_path / 'param_search.json'), 'w+') as f:
+                json.dump(steps_dict, f, indent=4)
     with open(str(base_run_path / 'param_search.json'), 'w+') as f:
-        json.dump(steps_dict, f)
+        json.dump(steps_dict, f, indent=4)
     print(f'best performance of {best_performance} - with params {best_performance_gene_param=}'
           f' - {best_performance_gene_penalty_patient_discount_param=}')
     return steps_dict
@@ -184,7 +189,7 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'gene_param':
                 {
-                    'strict_vals': [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 10, 50],
+                    'strict_vals': [0.01, 0.05, 0.1,0.2, 0.3, 0.5, 1, 2, 10, 50],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05

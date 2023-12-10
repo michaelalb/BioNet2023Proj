@@ -70,7 +70,7 @@ class MatchingSolver:
         }
         if should_save_files:
             with open(str(Path(base_path) / f'cover_set.json'), 'w+') as f:
-                json.dump(data, f)
+                json.dump(data, f, indent=4)
 
             with open(str(Path(base_path) / 'new_graph.pkl'), 'wb+') as f:
                 pickle.dump(new_graph, f)
