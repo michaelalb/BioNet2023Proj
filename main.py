@@ -189,7 +189,7 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'gene_param':
                 {
-                    'strict_vals': [0.01, 0.05, 0.1,0.2, 0.3, 0.5, 1, 2, 10, 50],
+                    'strict_vals': [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 1, 2, 10, 50],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
