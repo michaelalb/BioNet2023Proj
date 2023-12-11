@@ -13,9 +13,8 @@ from performance_evaluation import check_performances
 
 def run_ilp_analysis(path_to_data: str,
                      should_draw_graph: bool,
-                     new_gene_penalty: float = 0.2,
+                     alpha: float = 0.2,
                      should_save_files: bool = True,
-                     gene_penalty_patient_discount: float = 0.1,
                      base_path: str = './'):
     matching_data_handler = MatchingDataHandler(path_to_data)
     print(f'loading data - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
@@ -28,9 +27,8 @@ def run_ilp_analysis(path_to_data: str,
         draw_graph(orig_graph, save=True, name='before.png')
     print(f"finding min cover set - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
     cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, adjusted_gene_weights =\
-        matching_solver.find_min_cover_set(orig_graph, new_gene_penalty,
+        matching_solver.find_min_cover_set(orig_graph, alpha,
                                            should_save_files=should_save_files,
-                                           gene_penalty_patient_discount=gene_penalty_patient_discount,
                                            base_path=base_path)
     print(f"saving optimized graph picture - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
     if should_draw_graph:
@@ -167,6 +165,26 @@ def param_search(param_limits: dict,
           f' - {best_performance_gene_penalty_patient_discount_param=}')
     return steps_dict
 
+def run_single_ilp_analysis(alpha: float, current_run_path: Path):
+    patient_snps = load_patient_snps()
+    cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
+        run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
+                            should_draw_graph=False,
+                            alpha=alpha,
+                            should_save_files=True,
+                            base_path=str(current_run_path))
+
+    # sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
+    #                                                                   should_save_files=True,
+    #                                                                   base_path=str(current_run_path))
+    # optimized_patient_genes = get_patient_genes_from_graph(new_graph)
+    sorted_gene_names_by_weight, gene_weights = \
+        get_sorted_genes_by_wight_from_graph(new_graph, should_save_files=True, base_path=str(current_run_path))
+
+    ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
+                                                                patient_snps)
+    with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
+        json.dump(ranked_genes_lists, f, indent=4)
 
 def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Data/DriverMaxSetApproximation/BaseData',
          should_draw_graph: bool = False, should_calc_gene_weights: bool = False, should_calc_sub_graph: bool = False,
@@ -189,14 +207,14 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'gene_param':
                 {
-                    'strict_vals': [0.01, 0.05, 0.1,0.2, 0.3, 0.5, 1, 2, 10, 50],
+                    'strict_vals': [0.01],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
                 },
             "gene_penalty_patient_discount":
                 {
-                    'strict_vals': [1, 0.5, 1 / 5, 1 / 10, 1 / 20, 1 / 50, 1 / 100, 1 / 200],
+                    'strict_vals': [1],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
@@ -206,4 +224,5 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
 
 
 if __name__ == '__main__':
-    main(should_perform_param_search=True)
+    # main(should_perform_param_search=True)
+    run_single_ilp_analysis(alpha=0.2, current_run_path=Path('.'))

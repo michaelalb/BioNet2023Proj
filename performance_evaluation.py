@@ -115,7 +115,7 @@ def plot_performances(performances):
 if __name__ == '__main__':
     print("loading data")
     patient_snps = load_patient_snps()
-    ranked_genes_lists = json.load(open('./patients_with_ranked_genes_by_weight.json'))
+    ranked_genes_lists = json.load(open('./ranked_genes_lists.json'))
     gene_wights = json.load(open('./gene_weights.json'))
     wight_per_rank = {}
     for patient in ranked_genes_lists.keys():

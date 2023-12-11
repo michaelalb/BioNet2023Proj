@@ -75,10 +75,9 @@ class MatchingSolver:
             with open(str(Path(base_path) / 'new_graph.pkl'), 'wb+') as f:
                 pickle.dump(new_graph, f)
 
-    def find_min_cover_set(self, graph: nx.Graph, new_gene_penalty=0.2, should_save_files=True,
-                           gene_penalty_patient_discount: float = 0.1, base_path='./'):
+    def find_min_cover_set(self, graph: nx.Graph, alpha, should_save_files=True, base_path='./'):
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
-
+        
         # Create a binary variable to state that a node is included in the cover
         sorted_edges = [self._custom_sort(i) for i in graph.edges()]
         sorted_edges_data = [self._custom_sort(i) for i in graph.edges(data=True)]
@@ -90,45 +89,42 @@ class MatchingSolver:
         print("patient_pathway_nodes generation")
         patient_pathway_nodes = LpVariable.dicts("x", top_nodes, 0, 1, LpInteger)
         gene_nodes = LpVariable.dicts("y", bottom_nodes, 0, 1, LpInteger)
-        gene_patient_nodes = LpVariable.dicts("z", gene_patient_pairs, 0, 1, LpInteger)
+        # gene_patient_nodes = LpVariable.dicts("z", gene_patient_pairs, 0, 1, LpInteger)
         edges = LpVariable.dicts("e", sorted_edges, 0, 1, LpInteger)
-        # number_of_patients = len(set([patient_name for (patient_name, pathway) in top_nodes]))
+        number_of_patients = len(set([patient_name for (patient_name, pathway) in top_nodes]))
         print("Done creating ILP vars")
         # Objective function
         print("Creating objective function")
         print("edge_wights generation")
-        edge_wights = lpSum([edges[(n, n1)] * abs(d['weight']) for n, n1, d in sorted_edges_data])
-        node_penealties = []
+        gene_wight_multipliers = {}
+        for gene in gene_nodes:
+            covered_patients = len([patient_name for (gene1, patient_name) in
+                                     gene_patient_pairs if gene == gene1])
+            gene_wight_multipliers[gene] = 1 + alpha * covered_patients / number_of_patients
+        prob += lpSum([edges[(gene, pathway)] * abs(d['weight']) * gene_wight_multipliers[gene] 
+                             for gene, pathway, d in sorted_edges_data])
         # Constraints
-        # Constraint - 1 : Adding A new gene penalty
-        print("Constraint - 1 : Node penalties generation - For each new gene considered,"
-              " add a penalty which is proportional to the number of patients it covers")
-        for i, gene in enumerate(gene_nodes):
-            covered_patients = lpSum([gene_patient_nodes[(gene1, patient_name)] * gene_penalty_patient_discount
-                                      for (gene1, patient_name) in gene_patient_pairs if gene == gene1])
-            node_penealties.append(new_gene_penalty * (1 - covered_patients))
-        prob += (edge_wights - lpSum(node_penealties))
-        # Constraint - 2 : Edge-Vertex relationship
-        print("Constraint - 2 : Edge-Vertex relationship")
+        # Constraint - 1 : Edge-Vertex relationship
+        print("Constraint - 1 : Edge-Vertex relationship")
         for (gene_node, pathway_node) in sorted_edges:
             # goes over edges so that pathway nodes are first, then gene nodes
             # if we choose an edge both bottom and top nodes must be chosen
             prob += edges[(gene_node, pathway_node)] <= patient_pathway_nodes[pathway_node]
             prob += edges[(gene_node, pathway_node)] <= gene_nodes[gene_node]
 
-        # Constraint - 3 : for each pathway node only one gene node can be chosen
-        print("Constraint - 3 : for each pathway node only one gene node can be chosen")
+        # Constraint - 2 : for each pathway node only one gene node can be chosen
+        print("Constraint - 2 : for each pathway node only one gene node can be chosen")
         for pathway_node in top_nodes:
             prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= 1
 
-        # Constraint - 4 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen
-        print("Constraint - 4 "
-              ": for each gene and patient pair, if any pathway node is chosen, the patient must be chosen")
-        for (gene, (patient_name, pathway)) in sorted_edges:
-            prob += gene_patient_nodes[(gene, patient_name)] >= edges[(gene, (patient_name, pathway))]
+        # Constraint - 3 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen
+        # print("Constraint - 3"
+        #       ": for each gene and patient pair, if any pathway node is chosen, the patient must be chosen")
+        # for (gene, (patient_name, pathway)) in sorted_edges:
+        #     prob += gene_patient_nodes[(gene, patient_name)] >= edges[(gene, (patient_name, pathway))]
 
-        # Constraint - 5 : dont allow disconnected nodes
-        print("Constraint - 5 : dont allow disconnected nodes")
+        # Constraint - 4 : dont allow disconnected nodes
+        print("Constraint - 4 : dont allow disconnected nodes")
         print("Creating constraint for top nodes")
         for node in top_nodes:
             node_edges = [edge for edge in sorted_edges if node in edge]
@@ -147,7 +143,7 @@ class MatchingSolver:
 
         # get adjusted gene weights
         gene_weights, gene_adjustments = self._get_gene_weights_by_penalty(
-            chosen_edges, new_gene_penalty, gene_penalty_patient_discount)
+            chosen_edges, alpha, number_of_patients)
 
         # create new graph with only the chosen edges
         new_graph = create_new_bipartite_graph(bottom_cover_set, top_cover_set, chosen_edges)
@@ -159,8 +155,7 @@ class MatchingSolver:
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, gene_weights
 
-    def _get_gene_weights_by_penalty(self, chosen_edges: list, gene_penalty: float,
-                                     patient_discount: float):
+    def _get_gene_weights_by_penalty(self, chosen_edges: list, alpha: float, number_of_patients):
         gene_weights = {}
         gene_patient_counts = {}
         adjusted_gene_weights = {}
@@ -180,8 +175,7 @@ class MatchingSolver:
 
         for gene in gene_weights:
             number_of_covered_patients = len(set(gene_patient_counts[gene]))
-            current_gene_discount = number_of_covered_patients * patient_discount
-            current_gene_penalty = gene_penalty * (1 - current_gene_discount)
-            adjusted_gene_weights[gene] = gene_weights.get(gene) - current_gene_penalty
-            gene_adjustments[gene] = current_gene_penalty
+            current_gene_wight_multiplier = alpha * number_of_covered_patients / number_of_patients
+            adjusted_gene_weights[gene] = gene_weights.get(gene) * current_gene_wight_multiplier
+            gene_adjustments[gene] = current_gene_wight_multiplier
         return adjusted_gene_weights, gene_adjustments
