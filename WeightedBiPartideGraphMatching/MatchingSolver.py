@@ -49,7 +49,7 @@ class MatchingSolver:
 
     def print_and_save_ILP_res(self, bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
-                               new_graph, gene_weights, gene_adjustments,
+                               new_graph, gene_weights, gene_adjustments, gene_wight_multipliers,
                                should_save_files=True, base_path='./'):
         # print optimization results
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
@@ -66,6 +66,7 @@ class MatchingSolver:
             'total_weight': prob.objective.value(),
             'adjusted_gene_weights': gene_weights,
             'gene_adjustments': gene_adjustments,
+            'gene_wight_multipliers': gene_wight_multipliers,
             'total_sum_of_original_weights': sum([abs(d["weight"]) for _, _, d in sorted_edges_data]),
         }
         if should_save_files:
@@ -76,6 +77,7 @@ class MatchingSolver:
                 pickle.dump(new_graph, f)
 
     def find_min_cover_set(self, graph: nx.Graph, alpha, should_save_files=True, base_path='./'):
+        print("Starting ILP with alpha = ", alpha)
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
         
         # Create a binary variable to state that a node is included in the cover
@@ -97,23 +99,25 @@ class MatchingSolver:
         print("Creating objective function")
         print("edge_wights generation")
         gene_wight_multipliers = {}
+        # Constraints
+        # Constraint - 1 : Adjust weights of edges according to the number of patients covered
+        print("Constraint - 1 : Adjust weights of edges according to the number of patients covered")
         for gene in gene_nodes:
             covered_patients = len([patient_name for (gene1, patient_name) in
-                                     gene_patient_pairs if gene == gene1])
+                                    gene_patient_pairs if gene == gene1])
             gene_wight_multipliers[gene] = 1 + alpha * covered_patients / number_of_patients
-        prob += lpSum([edges[(gene, pathway)] * abs(d['weight']) * gene_wight_multipliers[gene] 
-                             for gene, pathway, d in sorted_edges_data])
-        # Constraints
-        # Constraint - 1 : Edge-Vertex relationship
-        print("Constraint - 1 : Edge-Vertex relationship")
+        prob += lpSum([edges[(gene, pathway)] * abs(d['weight']) * gene_wight_multipliers[gene]
+                       for gene, pathway, d in sorted_edges_data])
+        # Constraint - 2 : Edge-Vertex relationship
+        print("Constraint - 2 : Edge-Vertex relationship")
         for (gene_node, pathway_node) in sorted_edges:
             # goes over edges so that pathway nodes are first, then gene nodes
             # if we choose an edge both bottom and top nodes must be chosen
             prob += edges[(gene_node, pathway_node)] <= patient_pathway_nodes[pathway_node]
             prob += edges[(gene_node, pathway_node)] <= gene_nodes[gene_node]
 
-        # Constraint - 2 : for each pathway node only one gene node can be chosen
-        print("Constraint - 2 : for each pathway node only one gene node can be chosen")
+        # Constraint - 3 : for each pathway node only one gene node can be chosen
+        print("Constraint - 3 : for each pathway node only one gene node can be chosen")
         for pathway_node in top_nodes:
             prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= 1
 
@@ -150,7 +154,7 @@ class MatchingSolver:
 
         self.print_and_save_ILP_res(bottom_cover_set, bottom_nodes, top_cover_set, top_nodes, prob,
                                     sorted_edges, sorted_edges_data, chosen_edges, not_cover_set, new_graph,
-                                    gene_weights, gene_adjustments,
+                                    gene_weights, gene_adjustments, gene_wight_multipliers,
                                     should_save_files=should_save_files, base_path=base_path)
 
         return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, gene_weights
