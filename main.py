@@ -8,7 +8,7 @@ from WeightedBiPartideGraphMatching.GraphHandlers import *
 from WeightedBiPartideGraphMatching.MatchingDataHandler import MatchingDataHandler
 from WeightedBiPartideGraphMatching.MatchingSolver import MatchingSolver
 from WeightedBiPartideGraphMatching.MatchingVisualizer import *
-from performance_evaluation import check_performances
+from performance_evaluation import check_performances, plot_performances
 
 
 def run_ilp_analysis(path_to_data: str,
@@ -111,6 +111,7 @@ def param_search(param_limits: dict,
                   "gene_number_to_optimize": gene_number_to_optimize}
     alpha_param_range = set_up_param_ranges(param_limits, total_number_of_steps)
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
+    PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
     patient_snps = load_patient_snps()
     best_performance, best_performance_alpha_param = 0, 0
     # path set up
@@ -158,6 +159,10 @@ def param_search(param_limits: dict,
             # best_performance_gene_penalty_patient_discount_param = gene_penalty_patient_discount_param
         with open(str(base_run_path / 'param_search.json'), 'w+') as f:
             json.dump(steps_dict, f, indent=4)
+        PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers,)
+        plot_performances(
+            {'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances},
+            save_path=str(current_run_path / 'performances.png'))
     with open(str(base_run_path / 'param_search.json'), 'w+') as f:
         json.dump(steps_dict, f, indent=4)
     print(f'best performance of {best_performance} - with params {best_performance_alpha_param=}')

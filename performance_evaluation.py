@@ -76,7 +76,7 @@ def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
     }
 
 
-def plot_performances(performances):
+def plot_performances(performances, save_path=None):
     sns.set()
     figure, axis = plt.subplots(1, 3, figsize=(16,9))
     plt1 = axis[0]
@@ -109,7 +109,10 @@ def plot_performances(performances):
 
     handles, labels = plt1.get_legend_handles_labels()
     figure.legend(handles, labels, loc='lower center')
-    plt.show()
+    if save_path:
+        plt.savefig(save_path)
+    else:
+        plt.show()
 
 
 if __name__ == '__main__':
