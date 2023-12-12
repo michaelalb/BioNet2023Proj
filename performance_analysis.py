@@ -88,18 +88,31 @@ def get_points(results_directory):
              y.append(j)
     return(x,y)
     
-
-            
-if __name__ == "__main__":
-    i = 0
-    results_directory = "ParamOptimizationResults/12_11_2023_20_02"
-    fig, axs = plt.subplots(len(os.listdir(results_directory)) - 1, figsize=(16,9),sharex=True)
+def plot_gene_list_length_distribution(results_directory):
+    gene_list_lengths_by_alpha = {}
     for subdir in os.listdir(results_directory):
         if str(subdir).startswith("alpha_"):
-            x,y = get_points(os.path.join(results_directory, subdir))
-            axs[i].plot(x, y, 'o', markersize=1)
-            axs[i].set_title(subdir)
-            axs[i].set_ylim([0, 100])
-            i += 1
-    
+            with open(os.path.join(results_directory,subdir, 'ranked_genes_lists.json')) as f:
+                ranked_genes_lists = json.load(f)
+            gene_list_lengths = [len(gene_list) for gene_list in ranked_genes_lists.values()]
+            alpha = subdir.split('=')[1]
+            gene_list_lengths_by_alpha[alpha] = gene_list_lengths
+    plt.boxplot(gene_list_lengths_by_alpha.values(), labels=gene_list_lengths_by_alpha.keys())
+    plt.xlabel('Alpha')
+    plt.ylabel('Gene List Length')
+    plt.title('Gene List Length Distribution')
     plt.show()
+if __name__ == "__main__":
+    plot_gene_list_length_distribution(r"ParamOptimizationResults/12_12_2023_09_00")
+    # i = 0
+    # results_directory = "ParamOptimizationResults/12_11_2023_20_02"
+    # fig, axs = plt.subplots(len(os.listdir(results_directory)) - 1, figsize=(16,9),sharex=True)
+    # for subdir in os.listdir(results_directory):
+    #     if str(subdir).startswith("alpha_"):
+    #         x,y = get_points(os.path.join(results_directory, subdir))
+    #         axs[i].plot(x, y, 'o', markersize=1)
+    #         axs[i].set_title(subdir)
+    #         axs[i].set_ylim([0, 100])
+    #         i += 1
+    
+    # plt.show()

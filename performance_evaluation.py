@@ -84,8 +84,12 @@ def plot_performances(performances, save_path=None):
     plt2 = axis[1]
     plt3 = axis[2]
 
+    colormap = plt.cm.get_cmap('RdBu', len(performances) -1)
+    sorted_alphas = sorted([float(alpha) for alpha in performances.keys() if alpha != 'PRODIGY'])
+    
     for name, performance in performances.items():
-        plt1.plot(range(len(performance['precision'])),performance['precision'], label=name, marker='o',markersize=3)
+        color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
+        plt1.plot(range(len(performance['precision'])),performance['precision'], label=name, marker='o',markersize=3, color=color)
     plt1.set_xticks(range(0,20,2))
     plt1.set_xlabel('Top N Genes')
     plt1.set_ylabel('Average Precision')
@@ -93,7 +97,8 @@ def plot_performances(performances, save_path=None):
     plt1.set_box_aspect(9/16)
 
     for name, performance in performances.items():
-        plt2.plot(range(len(performance['recall'])),performance['recall'], label=name, marker='o',markersize=3)
+        color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
+        plt2.plot(range(len(performance['recall'])),performance['recall'], label=name, marker='o',markersize=3, color=color)
     plt2.set_xticks(range(0,20,2))
     plt2.set_xlabel('Top N Genes')
     plt2.set_ylabel('Average Recall')
@@ -101,7 +106,8 @@ def plot_performances(performances, save_path=None):
     plt2.set_box_aspect(9/16)
 
     for name, performance in performances.items():
-        plt3.plot(range(len(performance['f1'])),performance['f1'], label=name, marker='o',markersize=3)
+        color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
+        plt3.plot(range(len(performance['f1'])),performance['f1'], label=name, marker='o',markersize=3, color=color)
     plt3.set_xticks(range(0,20,2))
     plt3.set_xlabel('Top N Genes')
     plt3.set_ylabel('Average F1')
@@ -109,7 +115,7 @@ def plot_performances(performances, save_path=None):
     plt3.set_box_aspect(9/16)
 
     handles, labels = plt1.get_legend_handles_labels()
-    figure.legend(handles, labels, loc='lower center')
+    figure.legend(handles, labels, loc='upper right')
     if save_path:
         plt.savefig(save_path)
     else:
@@ -148,9 +154,10 @@ if __name__ == '__main__':
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
     print("calculating performances")
     all_performances = {}
-    for d in os.listdir('./ParamOptimizationResults/12_11_2023_22_05/'):
+    results_dir = './ParamOptimizationResults/12_12_2023_09_00/'
+    for d in os.listdir(results_dir):
         if d.startswith('alpha'):
-            with open(os.path.join('./ParamOptimizationResults/12_11_2023_22_05/', d, 'ranked_genes_lists.json')) as f:
+            with open(os.path.join(results_dir, d, 'ranked_genes_lists.json')) as f:
                 ranked_genes_lists = json.load(f)
             all_performances[d.split('=')[1]] =check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
