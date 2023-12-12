@@ -179,7 +179,7 @@ class MatchingSolver:
 
         for gene in gene_weights:
             number_of_covered_patients = len(set(gene_patient_counts[gene]))
-            current_gene_wight_multiplier = alpha * number_of_covered_patients / number_of_patients
+            current_gene_wight_multiplier = 1 + alpha * number_of_covered_patients / number_of_patients
             adjusted_gene_weights[gene] = gene_weights.get(gene) * current_gene_wight_multiplier
             gene_adjustments[gene] = current_gene_wight_multiplier
         return adjusted_gene_weights, gene_adjustments

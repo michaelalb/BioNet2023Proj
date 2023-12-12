@@ -148,14 +148,15 @@ if __name__ == '__main__':
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
     print("calculating performances")
     all_performances = {}
-    for d in os.listdir('./ParamOptimizationResults/12_11_2023_20_02/'):
+    for d in os.listdir('./ParamOptimizationResults/12_11_2023_22_05/'):
         if d.startswith('alpha'):
-            with open(os.path.join('./ParamOptimizationResults/12_11_2023_20_02/', d, 'ranked_genes_lists.json')) as f:
+            with open(os.path.join('./ParamOptimizationResults/12_11_2023_22_05/', d, 'ranked_genes_lists.json')) as f:
                 ranked_genes_lists = json.load(f)
             all_performances[d.split('=')[1]] =check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
     all_performances['PRODIGY'] = PRODIGY_performances
     # global_performances = check_performances({'TCGA.A6.2671.01':global_ranked_genes_lists}, patient_snps, gold_standard_drivers)
+    #all_performances = {k: all_performances[k] for k in ('-50', '-1','-0.01', '-0.1','0.01','0.1','1','50','PRODIGY')}
     plot_performances(all_performances)#, 'global': global_performances})
 
     # df = pd.DataFrame()
