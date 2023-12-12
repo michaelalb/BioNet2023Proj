@@ -1,3 +1,4 @@
+import os
 import json
 import numpy as np
 import pandas as pd
@@ -115,27 +116,27 @@ def plot_performances(performances):
 if __name__ == '__main__':
     print("loading data")
     patient_snps = load_patient_snps()
-    ranked_genes_lists = json.load(open('./ranked_genes_lists.json'))
-    gene_wights = json.load(open('./gene_weights.json'))
-    wight_per_rank = {}
-    for patient in ranked_genes_lists.keys():
-        for i, gene in enumerate(ranked_genes_lists[patient]):
-            if i >= TOP_X:
-                break
-            wight_per_rank[i+1] = wight_per_rank.get(i+1, []) + [gene_wights.get(gene,0)]
+    # ranked_genes_lists = json.load(open('./ranked_genes_lists.json'))
+    # gene_wights = json.load(open('./gene_weights.json'))
+    # wight_per_rank = {}
+    # for patient in ranked_genes_lists.keys():
+    #     for i, gene in enumerate(ranked_genes_lists[patient]):
+    #         if i >= TOP_X:
+    #             break
+    #         wight_per_rank[i+1] = wight_per_rank.get(i+1, []) + [gene_wights.get(gene,0)]
 
 
-    #box plot of weights per rank
-    keys = list(wight_per_rank.keys())
-    values = list(wight_per_rank.values())
+    # #box plot of weights per rank
+    # keys = list(wight_per_rank.keys())
+    # values = list(wight_per_rank.values())
 
-    #Create a box plot
-    plt.boxplot(values, labels=keys)
-    plt.xlabel('Rank')
-    plt.ylabel('Weight')
-    plt.title('Gene Weights per Rank')
-    plt.grid(True)
-    plt.show()
+    # #Create a box plot
+    # plt.boxplot(values, labels=keys)
+    # plt.xlabel('Rank')
+    # plt.ylabel('Weight')
+    # plt.title('Gene Weights per Rank')
+    # plt.grid(True)
+    # plt.show()
 
 
     PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
@@ -143,11 +144,16 @@ if __name__ == '__main__':
     # global_ranked_genes_lists
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
     print("calculating performances")
-    our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
+    all_performances = {}
+    for d in os.listdir('./ParamOptimizationResults/12_11_2023_20_02/'):
+        if d.startswith('alpha'):
+            with open(os.path.join('./ParamOptimizationResults/12_11_2023_20_02/', d, 'ranked_genes_lists.json')) as f:
+                ranked_genes_lists = json.load(f)
+            all_performances[d.split('=')[1]] =check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
-
+    all_performances['PRODIGY'] = PRODIGY_performances
     # global_performances = check_performances({'TCGA.A6.2671.01':global_ranked_genes_lists}, patient_snps, gold_standard_drivers)
-    plot_performances({'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances})#, 'global': global_performances})
+    plot_performances(all_performances)#, 'global': global_performances})
 
     # df = pd.DataFrame()
     # for patient in set(our_performances['recall'].keys()).intersection(PRODIGY_performances['recall'].keys()) :
