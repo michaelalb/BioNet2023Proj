@@ -1,0 +1,1340 @@
+{
+    "TCGA.CM.6170.01": [
+        "APC",
+        "SMAD4",
+        "KCNQ5",
+        "CASP9"
+    ],
+    "TCGA.A6.6140.01": [
+        "APC",
+        "TTN",
+        "AKAP9",
+        "HSP90B1",
+        "GSTM4",
+        "MAMLD1",
+        "GMPR"
+    ],
+    "TCGA.G4.6297.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "LAMA5",
+        "SERPING1",
+        "ADO"
+    ],
+    "TCGA.AA.3492.01": [
+        "TP53",
+        "RYR2",
+        "KCNQ2",
+        "FN1",
+        "MUC20"
+    ],
+    "TCGA.CM.4744.01": [
+        "APC",
+        "KRAS",
+        "ATP6V1B2",
+        "TCF4"
+    ],
+    "TCGA.A6.5664.01": [
+        "APC",
+        "KRAS",
+        "SMAD4"
+    ],
+    "TCGA.CM.6165.01": [
+        "TP53",
+        "DGKB",
+        "PRKAG1"
+    ],
+    "TCGA.CM.5862.01": [
+        "APC",
+        "TP53",
+        "DGKI",
+        "KIT"
+    ],
+    "TCGA.D5.6930.01": [
+        "IRF5",
+        "GNAS",
+        "HSPG2",
+        "ALDH1A3",
+        "KCNQ5",
+        "COL4A2",
+        "SLC27A5",
+        "SAFB",
+        "NSF",
+        "NFASC"
+    ],
+    "TCGA.AA.3502.01": [
+        "APC",
+        "KRAS",
+        "ATM",
+        "RYR1",
+        "TRAF2",
+        "ROR1"
+    ],
+    "TCGA.CA.6719.01": [
+        "TP53",
+        "CYP7A1"
+    ],
+    "TCGA.F4.6856.01": [
+        "APC",
+        "TP53",
+        "HSP90B1",
+        "CYP2B6",
+        "IRAK2"
+    ],
+    "TCGA.G4.6320.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "LRP1",
+        "HSPG2",
+        "PROS1",
+        "DNAJC6"
+    ],
+    "TCGA.CM.6675.01": [
+        "TP53",
+        "GNAS"
+    ],
+    "TCGA.G4.6303.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.DM.A0XF.01": [
+        "APC",
+        "TP53",
+        "SPTB",
+        "LIPE",
+        "FLNC"
+    ],
+    "TCGA.D5.6932.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.CM.5348.01": [
+        "TP53"
+    ],
+    "TCGA.G4.6307.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.CM.4750.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.F4.6854.01": [
+        "TP53",
+        "G6PD"
+    ],
+    "TCGA.DM.A1D4.01": [
+        "APC",
+        "TP53",
+        "PROS1"
+    ],
+    "TCGA.A6.5662.01": [
+        "TP53",
+        "NCOA2"
+    ],
+    "TCGA.AD.6895.01": [
+        "KRAS",
+        "OBSCN",
+        "USP34",
+        "PLXNB3",
+        "PTGS1",
+        "KL",
+        "ALDH1A1",
+        "CYP11B1",
+        "NMT1"
+    ],
+    "TCGA.A6.6141.01": [
+        "APC"
+    ],
+    "TCGA.AU.6004.01": [
+        "PIK3CA",
+        "RYR2",
+        "NCOA6",
+        "COL5A1",
+        "KCNQ2",
+        "ITPR3",
+        "PLXNB3"
+    ],
+    "TCGA.A6.5659.01": [
+        "APC",
+        "TP53",
+        "PIK3CA",
+        "MYC"
+    ],
+    "TCGA.A6.5666.01": [
+        "APC",
+        "KRAS",
+        "PIK3CA"
+    ],
+    "TCGA.A6.2675.01": [
+        "APC",
+        "TP53",
+        "ACACB"
+    ],
+    "TCGA.DM.A28G.01": [
+        "APC",
+        "GSTM3",
+        "GRIP1"
+    ],
+    "TCGA.AZ.6607.01": [
+        "TP53"
+    ],
+    "TCGA.A6.5660.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.G4.6293.01": [
+        "APC",
+        "PIK3CA",
+        "SIN3A"
+    ],
+    "TCGA.DM.A1D7.01": [
+        "APC",
+        "TP53",
+        "ALDH3B2"
+    ],
+    "TCGA.G4.6314.01": [
+        "APC",
+        "TP53",
+        "AR",
+        "CYP1A2"
+    ],
+    "TCGA.CM.6164.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.DM.A28H.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.D5.6539.01": [
+        "TP53"
+    ],
+    "TCGA.G4.6317.01": [
+        "APC",
+        "TP53",
+        "CDC37L1"
+    ],
+    "TCGA.AA.3655.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "ALDH1A3",
+        "CACNA1S"
+    ],
+    "TCGA.G4.6294.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "CACNA1A"
+    ],
+    "TCGA.G4.6310.01": [
+        "TP53",
+        "APP"
+    ],
+    "TCGA.A6.6781.01": [
+        "OBSCN",
+        "TTN",
+        "LAMA5",
+        "USP34",
+        "COL18A1",
+        "MUC16",
+        "TCF7L2",
+        "POFUT2",
+        "COL6A3",
+        "MYC",
+        "ITGAM",
+        "PLXNA2"
+    ],
+    "TCGA.CK.5915.01": [
+        "APC",
+        "IRF5",
+        "CYP1A2",
+        "OPRD1"
+    ],
+    "TCGA.AD.6548.01": [
+        "APC",
+        "PTGES2",
+        "SETD2"
+    ],
+    "TCGA.CM.4752.01": [
+        "APC",
+        "TP53",
+        "MTOR"
+    ],
+    "TCGA.DM.A1D9.01": [
+        "TP53",
+        "KRAS"
+    ],
+    "TCGA.D5.6534.01": [
+        "TP53",
+        "VWF",
+        "CBS",
+        "PCCA"
+    ],
+    "TCGA.D5.6920.01": [
+        "APC"
+    ],
+    "TCGA.D5.5538.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "KCNJ4",
+        "SCN1A",
+        "APAF1"
+    ],
+    "TCGA.F4.6809.01": [
+        "APC",
+        "IDO2",
+        "WDR5"
+    ],
+    "TCGA.F4.6570.01": [
+        "RYR2",
+        "NCOA6",
+        "COL18A1",
+        "BRAF",
+        "COL5A1",
+        "MTOR",
+        "HSPG2",
+        "PTEN",
+        "ENPP1",
+        "USP9X",
+        "AKAP9",
+        "ITGB4",
+        "ANK3",
+        "FMOD"
+    ],
+    "TCGA.A6.2671.01": [
+        "TP53"
+    ],
+    "TCGA.AZ.4323.01": [
+        "TP53",
+        "TAAR6",
+        "KIF2B"
+    ],
+    "TCGA.CM.6676.01": [
+        "APC",
+        "TP53",
+        "HLA-G"
+    ],
+    "TCGA.D5.6922.01": [
+        "TP53",
+        "PYGB"
+    ],
+    "TCGA.D5.6898.01": [
+        "APC",
+        "TP53",
+        "SLC12A2"
+    ],
+    "TCGA.F4.6704.01": [
+        "IRF5",
+        "OR5D18",
+        "KAT2A",
+        "MED14"
+    ],
+    "TCGA.CM.6678.01": [
+        "APC",
+        "PIK3CA"
+    ],
+    "TCGA.A6.5657.01": [
+        "APC",
+        "KRAS",
+        "PIK3CA",
+        "TTN",
+        "BAX",
+        "HGF"
+    ],
+    "TCGA.CM.6679.01": [
+        "APC",
+        "TP53",
+        "COL2A1",
+        "TAS1R3",
+        "ETS1"
+    ],
+    "TCGA.D5.5541.01": [
+        "TP53",
+        "CACNA1B",
+        "NCOA2",
+        "ADAM2"
+    ],
+    "TCGA.AD.6889.01": [
+        "TTN",
+        "LAMA5",
+        "GNAS",
+        "BRAF",
+        "HSPG2",
+        "NOS1",
+        "SYNE1",
+        "ATM",
+        "ITPR3",
+        "OBSL1",
+        "ADCY5",
+        "SRY",
+        "PLA2G3",
+        "GRIA2",
+        "A2M",
+        "MAPRE3"
+    ],
+    "TCGA.AA.3697.01": [
+        "APC",
+        "TP53",
+        "AR",
+        "GSTP1",
+        "GUCY2D",
+        "SPTBN5",
+        "SYT1"
+    ],
+    "TCGA.DM.A285.01": [
+        "APC",
+        "TP53",
+        "PIK3CA",
+        "MASP2"
+    ],
+    "TCGA.AA.3489.01": [
+        "APC",
+        "GNAS",
+        "COL18A1",
+        "ADAMTS3",
+        "CSNK2A1"
+    ],
+    "TCGA.G4.6306.01": [
+        "APC",
+        "TP53",
+        "MMRN1"
+    ],
+    "TCGA.A6.6142.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.G4.6311.01": [
+        "APC",
+        "PIK3CA",
+        "HSPG2",
+        "CREBBP",
+        "PLA2G4D",
+        "COL4A2"
+    ],
+    "TCGA.AA.3663.01": [
+        "KRAS",
+        "PIK3CA",
+        "MTOR",
+        "ALOX15B"
+    ],
+    "TCGA.AA.3660.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "FN1"
+    ],
+    "TCGA.CM.6163.01": [
+        "APC",
+        "TP53",
+        "CACNA1F"
+    ],
+    "TCGA.D5.6538.01": [
+        "APC",
+        "TP53",
+        "LRRFIP1"
+    ],
+    "TCGA.D5.6928.01": [
+        "RYR2",
+        "HSD17B1",
+        "MUC17",
+        "HIF1A",
+        "NCOR2",
+        "ATM",
+        "ENPP3",
+        "CYP26C1",
+        "THBS1",
+        "ALDH2",
+        "ZFYVE28",
+        "RXRA",
+        "IL2RB"
+    ],
+    "TCGA.CK.4948.01": [
+        "APC",
+        "TP53",
+        "COL5A1"
+    ],
+    "TCGA.CM.5341.01": [
+        "APC"
+    ],
+    "TCGA.CK.5912.01": [
+        "APC",
+        "IRF5",
+        "USP9X",
+        "POLR3A",
+        "ARFGEF1"
+    ],
+    "TCGA.CM.5863.01": [
+        "APC",
+        "HSD17B1",
+        "NCOR2"
+    ],
+    "TCGA.DM.A28M.01": [
+        "APC",
+        "KRAS",
+        "PIK3CA"
+    ],
+    "TCGA.D5.5537.01": [
+        "AKT1",
+        "GNB3",
+        "PTK2B",
+        "STAT5A"
+    ],
+    "TCGA.A6.6649.01": [
+        "ACAN",
+        "TFAP2B"
+    ],
+    "TCGA.A6.6652.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.CM.5349.01": [
+        "APC",
+        "TCF7L2"
+    ],
+    "TCGA.AU.3779.01": [
+        "APC",
+        "ALOX5",
+        "STAT3",
+        "ANK3",
+        "SCN2A",
+        "NPAS3"
+    ],
+    "TCGA.D5.6536.01": [
+        "APC",
+        "KRAS",
+        "ITPR1",
+        "CDH2",
+        "PPP2R5A"
+    ],
+    "TCGA.AM.5821.01": [
+        "APC",
+        "KRAS",
+        "TTN",
+        "LAMA5",
+        "USP34",
+        "GSTM3",
+        "IDO2",
+        "AGXT2",
+        "PTGS2",
+        "CABIN1"
+    ],
+    "TCGA.D5.7000.01": [
+        "APC",
+        "KRAS",
+        "DGKB"
+    ],
+    "TCGA.A6.6648.01": [
+        "APC",
+        "SYNE1",
+        "ARFGEF2",
+        "MYH6",
+        "JAK3"
+    ],
+    "TCGA.F4.6808.01": [
+        "APC",
+        "TP53",
+        "PDIA3"
+    ],
+    "TCGA.DM.A28E.01": [
+        "APC",
+        "CCR10"
+    ],
+    "TCGA.AD.6901.01": [
+        "APC",
+        "TP53",
+        "RYR2",
+        "MC4R",
+        "MYH11"
+    ],
+    "TCGA.CM.6168.01": [
+        "APC"
+    ],
+    "TCGA.DM.A1DA.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.G4.6586.01": [
+        "TP53",
+        "PIK3CA",
+        "BRAF"
+    ],
+    "TCGA.CM.6674.01": [
+        "APC",
+        "KRAS",
+        "LAMA5",
+        "GABBR1",
+        "WASL"
+    ],
+    "TCGA.CA.6718.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "LRP2",
+        "HIF1A"
+    ],
+    "TCGA.A6.6653.01": [
+        "KRAS",
+        "LAMA5",
+        "DGKB",
+        "KCNJ4",
+        "CRTC1"
+    ],
+    "TCGA.AD.6888.01": [
+        "APC",
+        "TP53",
+        "CCT6B"
+    ],
+    "TCGA.AZ.5407.01": [
+        "APC",
+        "TP53",
+        "KRAS"
+    ],
+    "TCGA.D5.6535.01": [
+        "APC",
+        "TP53",
+        "HTR2C",
+        "AK3",
+        "NSMAF"
+    ],
+    "TCGA.F4.6805.01": [
+        "TP53",
+        "PIK3CA",
+        "SMAD4"
+    ],
+    "TCGA.G4.6309.01": [
+        "APC",
+        "CUBN"
+    ],
+    "TCGA.CM.5864.01": [
+        "APC",
+        "TP53",
+        "TGM2"
+    ],
+    "TCGA.DM.A1HA.01": [
+        "APC",
+        "TP53",
+        "STAT3",
+        "SCN1A"
+    ],
+    "TCGA.AD.6965.01": [
+        "TP53",
+        "PIK3CA",
+        "NOTCH1"
+    ],
+    "TCGA.G4.6304.01": [
+        "PIK3CA",
+        "LRP2"
+    ],
+    "TCGA.G4.6323.01": [
+        "APC",
+        "KRAS",
+        "OR1C1",
+        "HTT",
+        "ADAM12"
+    ],
+    "TCGA.G4.6625.01": [
+        "APC",
+        "TP53",
+        "UGT2B4"
+    ],
+    "TCGA.D5.6929.01": [
+        "TP53",
+        "COL6A3",
+        "INSRR"
+    ],
+    "TCGA.CM.6677.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.AZ.4615.01": [
+        "OBSCN",
+        "AR",
+        "TTN",
+        "LAMA5",
+        "LRP2",
+        "USP34",
+        "NCOA6",
+        "COL18A1",
+        "HSPG2",
+        "CACNA1B",
+        "PLA2G4D",
+        "CYP2A6",
+        "ADAMTS16",
+        "MMP2",
+        "PHKA2",
+        "CACNA1H",
+        "BMPR2"
+    ],
+    "TCGA.CM.6171.01": [
+        "PIK3CA",
+        "RYR2",
+        "LRP2",
+        "USP34",
+        "ITPR1",
+        "ALOX5",
+        "GUCY2D",
+        "B4GALT2",
+        "NR5A1",
+        "CACNA1C",
+        "FZD2",
+        "CYP3A5",
+        "ACOX1"
+    ],
+    "TCGA.D5.6529.01": [
+        "KRAS",
+        "PIK3CA",
+        "IRF5",
+        "LRP2",
+        "ACACB",
+        "KCNQ5"
+    ],
+    "TCGA.DM.A28F.01": [
+        "APC",
+        "TP53",
+        "RYR2",
+        "ABCA1",
+        "B2M",
+        "GCLC"
+    ],
+    "TCGA.AZ.6598.01": [
+        "TP53",
+        "LRP1",
+        "CYP26A1"
+    ],
+    "TCGA.DM.A1D8.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "PIK3CA"
+    ],
+    "TCGA.CM.4743.01": [
+        "APOB",
+        "ESR1",
+        "GABBR1",
+        "TRIO",
+        "WNT1",
+        "F13A1",
+        "VAV2"
+    ],
+    "TCGA.G4.6295.01": [
+        "APC",
+        "TP53",
+        "EPHX1"
+    ],
+    "TCGA.AZ.6600.01": [
+        "TP53",
+        "LAMA3"
+    ],
+    "TCGA.AZ.4616.01": [
+        "APC",
+        "TP53",
+        "KRAS"
+    ],
+    "TCGA.CK.5916.01": [
+        "TP53",
+        "LRP2",
+        "MUC16",
+        "ALDH1A3",
+        "HIF1A",
+        "PLCB3"
+    ],
+    "TCGA.G4.6322.01": [
+        "APC",
+        "MTOR",
+        "CCR5"
+    ],
+    "TCGA.A6.4105.01": [
+        "TP53",
+        "KRAS"
+    ],
+    "TCGA.CM.6172.01": [
+        "KCNJ2",
+        "HTR1E"
+    ],
+    "TCGA.AZ.6601.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "ENPP1",
+        "WNT5A"
+    ],
+    "TCGA.A6.6651.01": [
+        "TP53"
+    ],
+    "TCGA.DM.A28C.01": [
+        "APC",
+        "PIK3CA",
+        "IRF5",
+        "RASAL3"
+    ],
+    "TCGA.G4.6299.01": [
+        "TP53",
+        "RYR2",
+        "MUC16",
+        "LIPE"
+    ],
+    "TCGA.CM.6680.01": [
+        "APC",
+        "USP9X"
+    ],
+    "TCGA.F4.6461.01": [
+        "PIK3CA",
+        "GSTA4"
+    ],
+    "TCGA.A6.5665.01": [
+        "RYR2",
+        "OBSCN",
+        "TTN",
+        "LAMA5",
+        "CREBBP",
+        "NOS1",
+        "PLB1",
+        "ACACB",
+        "COL6A3",
+        "TRIP6",
+        "CYP17A1",
+        "RDH12",
+        "CACNA1E",
+        "NOTCH3",
+        "FASN",
+        "MMP9",
+        "ITGA1"
+    ],
+    "TCGA.A6.6650.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "APOB",
+        "KCNAB2"
+    ],
+    "TCGA.D5.6927.01": [
+        "KRAS",
+        "PIK3CA",
+        "HSD17B1",
+        "MAX",
+        "TBL1XR1"
+    ],
+    "TCGA.AZ.4681.01": [
+        "ARID1A"
+    ],
+    "TCGA.F4.6806.01": [
+        "APC",
+        "KRAS",
+        "IRF5",
+        "MTOR",
+        "POFUT2"
+    ],
+    "TCGA.G4.6626.01": [
+        "APC",
+        "TP53",
+        "OR51T1"
+    ],
+    "TCGA.D5.6531.01": [
+        "TP53",
+        "A1BG"
+    ],
+    "TCGA.F4.6460.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.CA.5796.01": [
+        "KRAS",
+        "F8",
+        "EP300"
+    ],
+    "TCGA.DM.A1DB.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.AD.6963.01": [
+        "TP53",
+        "PAK1"
+    ],
+    "TCGA.AY.6386.01": [
+        "APC",
+        "KRAS",
+        "PIK3CA",
+        "ADCY10"
+    ],
+    "TCGA.CK.4950.01": [
+        "APC",
+        "KRAS",
+        "SMAD4",
+        "HSPG2",
+        "GATA4"
+    ],
+    "TCGA.F4.6463.01": [
+        "LRP1",
+        "TBP",
+        "MUC5B",
+        "TRRAP",
+        "KDM6A",
+        "SPHK1"
+    ],
+    "TCGA.A6.5667.01": [
+        "APC",
+        "TP53",
+        "DGKB"
+    ],
+    "TCGA.D5.6924.01": [
+        "APC",
+        "TP53",
+        "LRP1",
+        "GGT7",
+        "COL11A1",
+        "ADCY3"
+    ],
+    "TCGA.AZ.6603.01": [
+        "IRF5",
+        "LAMA5"
+    ],
+    "TCGA.CM.4748.01": [
+        "PIK3CA",
+        "PRKACB"
+    ],
+    "TCGA.CM.6166.01": [
+        "APC",
+        "KRAS",
+        "IRF5",
+        "PLA2G4D",
+        "CYP2A6",
+        "PTPN3",
+        "OR2T12",
+        "SALL4"
+    ],
+    "TCGA.CM.4747.01": [
+        "KRAS",
+        "PIK3CA",
+        "IRF5",
+        "KAT2B"
+    ],
+    "TCGA.AZ.6605.01": [
+        "APC",
+        "IRF5",
+        "ADAM28",
+        "ADCY7"
+    ],
+    "TCGA.D5.5539.01": [
+        "APC"
+    ],
+    "TCGA.CM.5344.01": [
+        "APC",
+        "TLE1",
+        "MKL1",
+        "PRKCQ"
+    ],
+    "TCGA.DM.A28K.01": [
+        "APC",
+        "KRAS"
+    ],
+    "TCGA.DM.A1D0.01": [
+        "APC",
+        "TP53",
+        "KRAS"
+    ],
+    "TCGA.CA.6717.01": [
+        "APC"
+    ],
+    "TCGA.CK.5913.01": [
+        "ARID1A",
+        "OBSCN",
+        "APOB",
+        "COL5A1",
+        "NOS1",
+        "TRIP6",
+        "CAMK2G",
+        "GPX7",
+        "COL7A1",
+        "NCOR1",
+        "PIK3R5"
+    ],
+    "TCGA.AA.3662.01": [
+        "APC",
+        "TP53",
+        "OBSL1",
+        "NTSR2",
+        "SMPD1"
+    ],
+    "TCGA.A6.6137.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.A6.6138.01": [
+        "APC",
+        "TP53",
+        "DGKB",
+        "OR2C1"
+    ],
+    "TCGA.A6.5661.01": [
+        "AR",
+        "BRAF",
+        "SPTB",
+        "VWF",
+        "AKAP9",
+        "GRM7",
+        "CTNNB1",
+        "DYNC2H1"
+    ],
+    "TCGA.CK.4952.01": [
+        "APC",
+        "IRF5"
+    ],
+    "TCGA.CM.6169.01": [
+        "APC",
+        "CYP1A2",
+        "CYP26B1"
+    ],
+    "TCGA.CA.6716.01": [
+        "APC",
+        "KRAS",
+        "IRF5",
+        "APOB",
+        "NCOA6",
+        "MUC16",
+        "NTSR2",
+        "RBP1"
+    ],
+    "TCGA.G4.6302.01": [
+        "TP53",
+        "ACAN",
+        "TPO"
+    ],
+    "TCGA.F4.6459.01": [
+        "TP53",
+        "TNC"
+    ],
+    "TCGA.AD.6890.01": [
+        "APC",
+        "PIK3CA",
+        "IRF5",
+        "ADCY8",
+        "SYT9"
+    ],
+    "TCGA.DM.A0X9.01": [
+        "PIK3CA",
+        "LAMA5",
+        "NFATC2"
+    ],
+    "TCGA.AD.6964.01": [
+        "KRAS",
+        "PIK3CA",
+        "LAMA5",
+        "NCOA6",
+        "CREBBP",
+        "F8",
+        "ENPP3",
+        "GRB2",
+        "SOX2",
+        "DLG1",
+        "LRRK2"
+    ],
+    "TCGA.D5.6926.01": [
+        "APC",
+        "TP53",
+        "APOA4"
+    ],
+    "TCGA.G4.6628.01": [
+        "PIK3CA",
+        "LRP2",
+        "USP34",
+        "NOS1",
+        "ACACB",
+        "HIF1A",
+        "CES1",
+        "GSTM4",
+        "SCN2A"
+    ],
+    "TCGA.CM.6162.01": [
+        "PIK3CA",
+        "ARID1A",
+        "LAMA5",
+        "COL18A1",
+        "TNC",
+        "SHC1",
+        "SLC9A1",
+        "PEG10",
+        "ACTN4",
+        "NMUR2"
+    ],
+    "TCGA.AA.3713.01": [
+        "APC",
+        "APOB",
+        "USP34",
+        "BRAF"
+    ],
+    "TCGA.F4.6703.01": [
+        "KRAS",
+        "ITPR1",
+        "NCOR2",
+        "TNXB",
+        "GPC2",
+        "ITGA6"
+    ],
+    "TCGA.F4.6855.01": [
+        "APC",
+        "KRAS",
+        "PIK3CA",
+        "HSD17B1",
+        "TBP",
+        "COL5A1"
+    ],
+    "TCGA.F4.6569.01": [
+        "APC",
+        "PIK3CA",
+        "IRF5",
+        "PHF12",
+        "COL4A5",
+        "NCOA3"
+    ],
+    "TCGA.G4.6298.01": [
+        "APC",
+        "TP53",
+        "HLA-A",
+        "KCNJ12"
+    ],
+    "TCGA.F4.6807.01": [
+        "TP53",
+        "PTEN",
+        "AWAT2",
+        "COL4A6"
+    ],
+    "TCGA.D5.6537.01": [
+        "APC",
+        "KRAS",
+        "PIK3CA",
+        "IRF5"
+    ],
+    "TCGA.G4.6588.01": [
+        "RYR2",
+        "AR",
+        "TTN",
+        "LAMA5",
+        "COL18A1",
+        "TBP",
+        "PTEN",
+        "HSD3B7",
+        "NCOA2",
+        "ALDH1B1",
+        "ADCY5",
+        "MMP2",
+        "JMJD7-PLA2G4B",
+        "CASR",
+        "PKD1",
+        "FLT4",
+        "FOXA1",
+        "THADA"
+    ],
+    "TCGA.A6.6780.01": [
+        "PIK3CA",
+        "APOB",
+        "LRP2",
+        "NCOA6"
+    ],
+    "TCGA.AA.3712.01": [
+        "APC",
+        "TP53",
+        "PIK3CA"
+    ],
+    "TCGA.A6.5656.01": [
+        "APC",
+        "TP53",
+        "DGKB",
+        "ITPR1",
+        "F8",
+        "COL5A3"
+    ],
+    "TCGA.AZ.6599.01": [
+        "APC",
+        "KRAS",
+        "CREBBP",
+        "NOS1"
+    ],
+    "TCGA.D5.6533.01": [
+        "APC",
+        "TP53",
+        "GSTP1",
+        "CYP2U1"
+    ],
+    "TCGA.AZ.4682.01": [
+        "APC",
+        "USP9X",
+        "OR52M1",
+        "DSCAM"
+    ],
+    "TCGA.D5.6931.01": [
+        "TP53",
+        "PIK3CA",
+        "APOB",
+        "CHRM2"
+    ],
+    "TCGA.AA.3511.01": [
+        "APC",
+        "TP53",
+        "LAMA5"
+    ],
+    "TCGA.AD.6899.01": [
+        "PIK3CA",
+        "TBXAS1",
+        "NDUFS2"
+    ],
+    "TCGA.DM.A0XD.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.AZ.5403.01": [
+        "TP53",
+        "LONP1"
+    ],
+    "TCGA.DM.A282.01": [
+        "APC",
+        "KRAS",
+        "IRF5",
+        "XCR1",
+        "TAS2R30"
+    ],
+    "TCGA.CA.5797.01": [
+        "APC",
+        "TP53",
+        "OR2M2"
+    ],
+    "TCGA.A6.6782.01": [
+        "APC",
+        "TP53",
+        "MUC17",
+        "COL4A4"
+    ],
+    "TCGA.D5.6540.01": [
+        "APC",
+        "TTN",
+        "LAMA5",
+        "PTEN",
+        "PLB1",
+        "CYP26B1",
+        "DBT",
+        "GPLD1"
+    ],
+    "TCGA.G4.6315.01": [
+        "APC",
+        "TP53",
+        "CSF2RB",
+        "FTL"
+    ],
+    "TCGA.G4.6321.01": [
+        "IRF5",
+        "MED15"
+    ],
+    "TCGA.CK.4947.01": [
+        "APC",
+        "ATM",
+        "ACOT12",
+        "GRM5"
+    ],
+    "TCGA.CK.5914.01": [
+        "APC",
+        "TP53",
+        "OPRD1",
+        "SPRED1"
+    ],
+    "TCGA.CM.5860.01": [
+        "APC",
+        "TP53",
+        "PIK3CA"
+    ],
+    "TCGA.CM.5861.01": [
+        "APC",
+        "RYR2",
+        "TTN",
+        "APOB",
+        "LRP1",
+        "NCOA6",
+        "ENPP1",
+        "ITPR3",
+        "DBT",
+        "PTGS1",
+        "C1S",
+        "AKR1B10",
+        "NOS3"
+    ],
+    "TCGA.D5.6532.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "PIK3CA",
+        "CYP2C8",
+        "AMPD3"
+    ],
+    "TCGA.A6.6654.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "ALDH1A3",
+        "GAD2",
+        "IFIH1"
+    ],
+    "TCGA.CM.5868.01": [
+        "APC",
+        "TP53",
+        "OPRD1",
+        "CYP7A1",
+        "SPTBN2"
+    ],
+    "TCGA.CM.6161.01": [
+        "GNAS",
+        "MUC17",
+        "PLB1",
+        "MED12",
+        "OBSL1",
+        "B3GNTL1"
+    ],
+    "TCGA.D5.5540.01": [
+        "APC",
+        "TP53",
+        "PIK3CA"
+    ],
+    "TCGA.D5.6541.01": [
+        "TP53",
+        "KRAS",
+        "PIK3CA"
+    ],
+    "TCGA.AY.6196.01": [
+        "TP53"
+    ],
+    "TCGA.AY.5543.01": [
+        "APC",
+        "TP53"
+    ],
+    "TCGA.AD.5900.01": [
+        "APC",
+        "IRF5",
+        "RYR2",
+        "USP34",
+        "HSD3B7",
+        "PLXNB3",
+        "CES1",
+        "PYGB",
+        "ALDH9A1"
+    ],
+    "TCGA.AM.5820.01": [
+        "APC",
+        "TP53",
+        "LRP2",
+        "HEXB",
+        "NEFH"
+    ],
+    "TCGA.DM.A1D6.01": [
+        "APC",
+        "TP53",
+        "KRAS",
+        "F11"
+    ],
+    "TCGA.AY.6197.01": [
+        "APC",
+        "TP53",
+        "KCNQ2"
+    ]
+}

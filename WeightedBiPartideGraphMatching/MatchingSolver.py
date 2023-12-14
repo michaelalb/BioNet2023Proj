@@ -76,8 +76,8 @@ class MatchingSolver:
             with open(str(Path(base_path) / 'new_graph.pkl'), 'wb+') as f:
                 pickle.dump(new_graph, f)
 
-    def find_min_cover_set(self, graph: nx.Graph, alpha, should_save_files=True, base_path='./'):
-        print("Starting ILP with alpha = ", alpha)
+    def find_min_cover_set(self, graph: nx.Graph, alpha, beta, should_save_files=True, base_path='./'):
+        print(f"Starting ILP with {alpha=}, {beta=}")
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
         
         # Create a binary variable to state that a node is included in the cover
@@ -86,7 +86,7 @@ class MatchingSolver:
 
         top_nodes = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 0]
         bottom_nodes = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 1]
-        print("gene_patient_paires generation")
+        print("gene_patient_pairs generation")
         gene_patient_pairs = list(set([(gene, patient_name) for (gene, (patient_name, pathway)) in sorted_edges]))
         print("patient_pathway_nodes generation")
         patient_pathway_nodes = LpVariable.dicts("x", top_nodes, 0, 1, LpInteger)
@@ -98,26 +98,44 @@ class MatchingSolver:
         # Objective function
         print("Creating objective function")
         print("edge_wights generation")
-        gene_wight_multipliers = {}
+        gene_patient_pathway_weight_counts, gene_patient_pathway_weight_multipliers = {}, {}
+        patient_pathway_count = {}
         # Constraints
         # Constraint - 1 : Adjust weights of edges according to the number of patients covered
         print("Constraint - 1 : Adjust weights of edges according to the number of patients covered")
+        for gene, (patient_name, pathway) in sorted_edges:
+            gene_patient = (gene, patient_name)
+            gene_patient_pathway_weight_counts[gene_patient] = gene_patient_pathway_weight_counts.get(
+                gene_patient, 0) + 1
+            if patient_name not in patient_pathway_count:
+                patient_pathway_count[patient_name] = []
+            patient_pathway_count[patient_name].append(pathway)
+        for gene, patient_name in gene_patient_pathway_weight_counts:
+            patient_pathways = len(set(patient_pathway_count[patient_name]))
+            gene_patient_pathway_weight_multipliers[(gene, patient_name)] = 1 + (
+                    beta * gene_patient_pathway_weight_counts[(gene, patient_name)] / patient_pathways)
+
+        gene_wight_multipliers = {}
+        # Constraints
+        # Constraint - 2 : Adjust weights of edges according to the number of patients covered
+        print("Constraint - 2 : Adjust weights of edges according to the number of pathways in patient covered")
         for gene in gene_nodes:
             covered_patients = len([patient_name for (gene1, patient_name) in
                                     gene_patient_pairs if gene == gene1])
             gene_wight_multipliers[gene] = 1 + alpha * covered_patients / number_of_patients
-        prob += lpSum([edges[(gene, pathway)] * abs(d['weight']) * gene_wight_multipliers[gene]
+        prob += lpSum([edges[(gene, pathway)] * abs(d['weight']) * gene_wight_multipliers[gene] * gene_patient_pathway_weight_multipliers[(gene, pathway[0])]
                        for gene, pathway, d in sorted_edges_data])
-        # Constraint - 2 : Edge-Vertex relationship
-        print("Constraint - 2 : Edge-Vertex relationship")
+
+        # Constraint - 3 : Edge-Vertex relationship
+        print("Constraint - 3 : Edge-Vertex relationship")
         for (gene_node, pathway_node) in sorted_edges:
             # goes over edges so that pathway nodes are first, then gene nodes
             # if we choose an edge both bottom and top nodes must be chosen
             prob += edges[(gene_node, pathway_node)] <= patient_pathway_nodes[pathway_node]
             prob += edges[(gene_node, pathway_node)] <= gene_nodes[gene_node]
 
-        # Constraint - 3 : for each pathway node only one gene node can be chosen
-        print("Constraint - 3 : for each pathway node only one gene node can be chosen")
+        # Constraint - 4 : for each pathway node only one gene node can be chosen
+        print("Constraint - 4 : for each pathway node only one gene node can be chosen")
         for pathway_node in top_nodes:
             prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= 1
 
@@ -127,8 +145,8 @@ class MatchingSolver:
         # for (gene, (patient_name, pathway)) in sorted_edges:
         #     prob += gene_patient_nodes[(gene, patient_name)] >= edges[(gene, (patient_name, pathway))]
 
-        # Constraint - 4 : dont allow disconnected nodes
-        print("Constraint - 4 : dont allow disconnected nodes")
+        # Constraint - 5 : dont allow disconnected nodes
+        print("Constraint - 5 : dont allow disconnected nodes")
         print("Creating constraint for top nodes")
         for node in top_nodes:
             node_edges = [edge for edge in sorted_edges if node in edge]
