@@ -109,10 +109,10 @@ def get_patient_genes_from_graph(graph):
         patient_genes[patient_name] = []
         for node in graph.nodes():
             if isinstance(node, tuple) and (node[0] == patient_name or node[1] == patient_name):
-                gene = [i for i in graph.neighbors(node)]
-                assert len(gene) == 1
-                gene = gene[0]
-                patient_genes[patient_name].append(gene)
+                genes = [i for i in graph.neighbors(node)]
+                # assert len(gene) == 1
+                # gene = gene[0]
+                patient_genes[patient_name].extend(genes)
         patient_genes[patient_name] = list(set(patient_genes[patient_name]))
     return patient_genes
 

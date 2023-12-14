@@ -84,12 +84,12 @@ def plot_performances(performances, save_path=None):
     plt2 = axis[1]
     plt3 = axis[2]
 
-    colormap = plt.cm.get_cmap('RdBu', len(performances) -1)
-    sorted_alphas = sorted([float(alpha) for alpha in performances.keys() if alpha != 'PRODIGY'])
+    #colormap = plt.cm.get_cmap('RdBu', len(performances) -1)
+    #sorted_alphas = sorted([float(alpha) for alpha in performances.keys() if alpha != 'PRODIGY'])
     
     for name, performance in performances.items():
-        color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
-        plt1.plot(range(len(performance['precision'])),performance['precision'], label=name, marker='o',markersize=3, color=color)
+        #color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
+        plt1.plot(range(len(performance['precision'])),performance['precision'], label=name, marker='o',markersize=3)#, color=color)
     plt1.set_xticks(range(0,20,2))
     plt1.set_xlabel('Top N Genes')
     plt1.set_ylabel('Average Precision')
@@ -97,8 +97,8 @@ def plot_performances(performances, save_path=None):
     plt1.set_box_aspect(9/16)
 
     for name, performance in performances.items():
-        color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
-        plt2.plot(range(len(performance['recall'])),performance['recall'], label=name, marker='o',markersize=3, color=color)
+        #color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
+        plt2.plot(range(len(performance['recall'])),performance['recall'], label=name, marker='o',markersize=3)#, color=color)
     plt2.set_xticks(range(0,20,2))
     plt2.set_xlabel('Top N Genes')
     plt2.set_ylabel('Average Recall')
@@ -106,8 +106,8 @@ def plot_performances(performances, save_path=None):
     plt2.set_box_aspect(9/16)
 
     for name, performance in performances.items():
-        color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
-        plt3.plot(range(len(performance['f1'])),performance['f1'], label=name, marker='o',markersize=3, color=color)
+        #color = colormap(sorted_alphas.index(float(name)) / len(sorted_alphas)) if name != 'PRODIGY' else 'black'
+        plt3.plot(range(len(performance['f1'])),performance['f1'], label=name, marker='o',markersize=3)#, color=color)
     plt3.set_xticks(range(0,20,2))
     plt3.set_xlabel('Top N Genes')
     plt3.set_ylabel('Average F1')
@@ -154,12 +154,14 @@ if __name__ == '__main__':
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
     print("calculating performances")
     all_performances = {}
-    results_dir = './ParamOptimizationResults/12_12_2023_09_00/'
+    results_dir = './ParamOptimizationResults/12_13_2023_05_32/'
     for d in os.listdir(results_dir):
         if d.startswith('alpha'):
             with open(os.path.join(results_dir, d, 'ranked_genes_lists.json')) as f:
                 ranked_genes_lists = json.load(f)
-            all_performances[d.split('=')[1]] =check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
+            alpha = float(d.split('=')[1].replace('_beta_param', ''))
+            beta = float(d.split('=')[2])
+            all_performances[(alpha, beta)] =check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
     all_performances['PRODIGY'] = PRODIGY_performances
     # global_performances = check_performances({'TCGA.A6.2671.01':global_ranked_genes_lists}, patient_snps, gold_standard_drivers)

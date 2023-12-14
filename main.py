@@ -15,6 +15,7 @@ def run_ilp_analysis(path_to_data: str,
                      should_draw_graph: bool,
                      alpha: float = 0.2,
                      beta: float = 0.2,
+                     gamma: float = 1,
                      should_save_files: bool = True,
                      base_path: str = './'):
     matching_data_handler = MatchingDataHandler(path_to_data)
@@ -28,7 +29,7 @@ def run_ilp_analysis(path_to_data: str,
         draw_graph(orig_graph, save=True, name='before.png')
     print(f"finding min cover set - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
     cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, adjusted_gene_weights =\
-        matching_solver.find_min_cover_set(orig_graph, alpha, beta,
+        matching_solver.find_min_cover_set(orig_graph, alpha, beta,gamma,
                                            should_save_files=should_save_files,
                                            base_path=base_path)
     print(f"saving optimized graph picture - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
@@ -102,68 +103,73 @@ def get_param_range(param_limits: dict, total_number_of_steps: int,
 def set_up_param_ranges(param_limits: dict, total_number_of_steps: int):
     alpha_param_range = get_param_range(param_limits, total_number_of_steps, 'alpha')
     beta_param_range = get_param_range(param_limits, total_number_of_steps, 'beta')
-    return alpha_param_range, beta_param_range
+    gamma_param_range = get_param_range(param_limits, total_number_of_steps, 'gamma')
+    return alpha_param_range, beta_param_range, gamma_param_range
 
 
 def param_search(param_limits: dict,
                  gene_number_to_optimize: int = 5, total_number_of_steps: int = 50):
     steps_dict = {'search_results': {},
                   "gene_number_to_optimize": gene_number_to_optimize}
-    alpha_param_range, beta_param_range = set_up_param_ranges(param_limits, total_number_of_steps)
+    alpha_param_range, beta_param_range, gamma_param_range = set_up_param_ranges(param_limits, total_number_of_steps)
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
     PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
     patient_snps = load_patient_snps()
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers, )
-    best_performance, best_performance_alpha_param, best_performance_beta_param = 0, 0, 0
+    best_performance, best_performance_alpha_param, best_performance_beta_param, best_performance_gamma_param = 0, 0, 0, 0
     # path set up
     base_run_path = Path(f'./ParamOptimizationResults/{datetime.now().strftime("%m_%d_%Y_%H_%M")}')
 
     for alpha_param in alpha_param_range:
         for beta_param in beta_param_range:
-            current_run_path = Path(base_run_path / f'{alpha_param=}_{beta_param=}')
-            current_run_path.mkdir(parents=True, exist_ok=True)
-            print(f'Optimizing {alpha_param=} {beta_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-            cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
-                run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
-                                 should_draw_graph=False,
-                                 should_save_files=True,
-                                 alpha=alpha_param,
-                                 beta=beta_param,
-                                 base_path=str(current_run_path))
+            for gamma_param in gamma_param_range:
+                current_run_path = Path(base_run_path / f'{alpha_param=}_{beta_param=}_{gamma_param=}')
+                current_run_path.mkdir(parents=True, exist_ok=True)
+                print(f'Optimizing {alpha_param=} {beta_param=} {gamma_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
+                cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
+                    run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
+                                    should_draw_graph=False,
+                                    should_save_files=True,
+                                    alpha=alpha_param,
+                                    beta=beta_param,
+                                    gamma=gamma_param,
+                                    base_path=str(current_run_path))
 
-            sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
-                                                                              should_save_files=True,
-                                                                              base_path=str(current_run_path))
-            optimized_patient_genes = get_patient_genes_from_graph(new_graph)
-            # sorted_gene_names_by_weight, gene_weights = \
-            #     get_sorted_genes_by_wight_from_graph(new_graph, should_save_files=True, base_path=str(current_run_path))
+                sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
+                                                                                should_save_files=True,
+                                                                                base_path=str(current_run_path))
+                optimized_patient_genes = get_patient_genes_from_graph(new_graph)
+                # sorted_gene_names_by_weight, gene_weights = \
+                #     get_sorted_genes_by_wight_from_graph(new_graph, should_save_files=True, base_path=str(current_run_path))
 
-            ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
-                                                                     optimized_patient_genes)
-            with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
-                json.dump(ranked_genes_lists, f, indent=4)
-            our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
-            target_performance = our_performances['precision'][gene_number_to_optimize - 1]
-            steps_dict['search_results'][str((alpha_param, beta_param))] = {
-                "alpha_param": alpha_param,
-                "beta_param": beta_param,
-                'precision': list(our_performances['precision']),
-                'recall': list(our_performances['recall']),
-                'f1': list(our_performances['f1']),
-                'target_performance': target_performance,
-            }
-            target_performance = our_performances['precision'][gene_number_to_optimize - 1]
-            print(f'performance for {alpha_param=}, {beta_param=} is {target_performance}')
-            if target_performance > best_performance:
-                best_performance = target_performance
-                best_performance_alpha_param = alpha_param
-                best_performance_beta_param = beta_param
-            with open(str(base_run_path / 'param_search.json'), 'w+') as f:
-                json.dump(steps_dict, f, indent=4)
-            print(f'plotting perf for {alpha_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-            plot_performances(
-                {'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances},
-                save_path=str(current_run_path / 'performances.png'))
+                ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
+                                                                        optimized_patient_genes)
+                with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
+                    json.dump(ranked_genes_lists, f, indent=4)
+                our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
+                target_performance = our_performances['precision'][gene_number_to_optimize - 1]
+                steps_dict['search_results'][str((alpha_param, beta_param, gamma_param))] = {
+                    "alpha_param": alpha_param,
+                    "beta_param": beta_param,
+                    "gamma_param": gamma_param,
+                    'precision': list(our_performances['precision']),
+                    'recall': list(our_performances['recall']),
+                    'f1': list(our_performances['f1']),
+                    'target_performance': target_performance,
+                }
+                target_performance = our_performances['precision'][gene_number_to_optimize - 1]
+                print(f'performance for {alpha_param=}, {beta_param=} {gamma_param=} is {target_performance}')
+                if target_performance > best_performance:
+                    best_performance = target_performance
+                    best_performance_alpha_param = alpha_param
+                    best_performance_beta_param = beta_param
+                    best_performance_gamma_param = gamma_param
+                with open(str(base_run_path / 'param_search.json'), 'w+') as f:
+                    json.dump(steps_dict, f, indent=4)
+                print(f'plotting perf for {alpha_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
+                plot_performances(
+                    {'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances},
+                    save_path=str(current_run_path / 'performances.png'))
         perf_dict = {k: {
             "precision": v["precision"],
             "recall": v["recall"],
@@ -178,7 +184,7 @@ def param_search(param_limits: dict,
         "f1": v["f1"]} for k, v in steps_dict['search_results'].items()}
     perf_dict['PRODIGY'] = PRODIGY_performances
     plot_performances(perf_dict, save_path=str(base_run_path / 'all_performances.png'))
-    print(f'best performance of {best_performance} - with params {best_performance_alpha_param=} {best_performance_beta_param=}')
+    print(f'best performance of {best_performance} - with params {best_performance_alpha_param=} {best_performance_beta_param=} {best_performance_gamma_param=}')
     return steps_dict
 
 
@@ -226,17 +232,23 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'alpha':
                 {
-                    'strict_vals': [0.2, 0.3, 0.5, 0.8, 1.2, 1.5, 2, 10, 50, 0], # 1, 0.01, 0.05, 0.1,
+                    #'strict_vals': [0.2, 0.3, 0.5, 0.8, 1.2, 1.5, 2, 10, 50, 0], # 1, 0.01, 0.05, 0.1,
+                    'strict_vals': [0],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
                 },
             'beta':
                 {
-                    'strict_vals': [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8, 1, 1.2, 1.5, 2, 10, 50, 0],
+                    #'strict_vals': [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8, 1, 1.2, 1.5, 2, 10, 50, 0],
+                    'strict_vals': [0],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
+                },
+            'gamma':
+                {
+                    'strict_vals': [2],
                 }
         }
         param_search(param_limits=param_limits, gene_number_to_optimize=5, total_number_of_steps=50)

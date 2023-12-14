@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import collections
 import pandas as pd
@@ -88,22 +89,58 @@ def get_points(results_directory):
              y.append(j)
     return(x,y)
     
-def plot_gene_list_length_distribution(results_directory):
-    gene_list_lengths_by_alpha = {}
-    for subdir in os.listdir(results_directory):
-        if str(subdir).startswith("alpha_"):
-            with open(os.path.join(results_directory,subdir, 'ranked_genes_lists.json')) as f:
-                ranked_genes_lists = json.load(f)
-            gene_list_lengths = [len(gene_list) for gene_list in ranked_genes_lists.values()]
-            alpha = subdir.split('=')[1]
-            gene_list_lengths_by_alpha[alpha] = gene_list_lengths
-    plt.boxplot(gene_list_lengths_by_alpha.values(), labels=gene_list_lengths_by_alpha.keys())
-    plt.xlabel('Alpha')
+def plot_gene_list_length_distribution(results_directory,file_regex ,parm_regex, param_name):
+    gene_list_lengths_by_param = {}
+    for subdir in Path(results_directory).glob(file_regex):
+        with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+            ranked_genes_lists = json.load(f)
+        gene_list_lengths = [len(gene_list) for gene_list in ranked_genes_lists.values()]
+        param = float(re.search(parm_regex, str(subdir)).group(1))
+        gene_list_lengths_by_param[param] = gene_list_lengths
+    gene_list_lengths_by_param = dict(sorted(gene_list_lengths_by_param.items(), key=lambda item: item[0], reverse=True))
+    plt.boxplot(gene_list_lengths_by_param.values(), labels=gene_list_lengths_by_param.keys())
+    plt.xlabel(param_name)
     plt.ylabel('Gene List Length')
     plt.title('Gene List Length Distribution')
     plt.show()
+
+def plot_unique_genes_count_distribution(results_directory,file_regex ,parm_regex, param_name):
+    unqiue_genes_count = {}
+    for subdir in Path(results_directory).glob(file_regex):
+        with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+            ranked_genes_lists = json.load(f)
+        unqiue_genes = set([gene for list in ranked_genes_lists.values() for gene in list])
+        param = float(re.search(parm_regex, str(subdir)).group(1))
+        unqiue_genes_count[param] = len(unqiue_genes)
+    unqiue_genes_count = dict(sorted(unqiue_genes_count.items(), key=lambda item: item[0], reverse=True))
+    plt.plot(unqiue_genes_count.keys(), unqiue_genes_count.values(), '--o', markersize=5)
+    plt.xlabel(param_name)
+    plt.ylabel('Unique Genes Count')
+    plt.title('Unique Genes Count Distribution')
+    plt.show()
+
+def plot_genes_occurrence_distribution(results_directory,file_regex ,parm_regex, param_name):
+    gene_occurrences_by_param = {}
+    for subdir in Path(results_directory).glob(file_regex):
+        with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+            ranked_genes_lists = json.load(f)
+        gene_occurrences = collections.Counter([gene for list in ranked_genes_lists.values() for gene in list])
+        param = float(re.search(parm_regex, str(subdir)).group(1))
+        gene_occurrences_by_param[param] = [occurrences for gene, occurrences in gene_occurrences.items()]
+    gene_occurrences_by_param = dict(sorted(gene_occurrences_by_param.items(), key=lambda item: item[0], reverse=True))
+    plt.boxplot(gene_occurrences_by_param.values(), labels=gene_occurrences_by_param.keys())
+    plt.xlabel(param_name)
+    plt.ylabel('Gene occurrence')
+    plt.title('Gene Occurrences')
+    plt.show()
+
 if __name__ == "__main__":
-    plot_gene_list_length_distribution(r"ParamOptimizationResults/12_12_2023_09_00")
+    plot_gene_list_length_distribution(r"ParamOptimizationResults/12_13_2023_05_32",'alpha_param=*_beta_param=0',r'alpha_param=([^_]*)_.*','Alpha')
+    plot_gene_list_length_distribution(r"ParamOptimizationResults/12_13_2023_05_32",'alpha_param=0_beta_param=*',r'.*beta_param=(.*)','Beta')
+    plot_unique_genes_count_distribution(r"ParamOptimizationResults/12_13_2023_05_32",'alpha_param=*_beta_param=0',r'alpha_param=([^_]*)_.*','Alpha')
+    plot_unique_genes_count_distribution(r"ParamOptimizationResults/12_13_2023_05_32",'alpha_param=0_beta_param=*',r'.*beta_param=(.*)','Beta')
+    plot_genes_occurrence_distribution(r"ParamOptimizationResults/12_13_2023_05_32",'alpha_param=*_beta_param=0',r'alpha_param=([^_]*)_.*','Alpha')
+    plot_genes_occurrence_distribution(r"ParamOptimizationResults/12_13_2023_05_32",'alpha_param=0_beta_param=*',r'.*beta_param=(.*)','Beta')
     # i = 0
     # results_directory = "ParamOptimizationResults/12_11_2023_20_02"
     # fig, axs = plt.subplots(len(os.listdir(results_directory)) - 1, figsize=(16,9),sharex=True)

@@ -76,8 +76,8 @@ class MatchingSolver:
             with open(str(Path(base_path) / 'new_graph.pkl'), 'wb+') as f:
                 pickle.dump(new_graph, f)
 
-    def find_min_cover_set(self, graph: nx.Graph, alpha, beta, should_save_files=True, base_path='./'):
-        print(f"Starting ILP with {alpha=}, {beta=}")
+    def find_min_cover_set(self, graph: nx.Graph, alpha, beta, gamma, should_save_files=True, base_path='./'):
+        print(f"Starting ILP with {alpha=}, {beta=}, {gamma=}")
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
         
         # Create a binary variable to state that a node is included in the cover
@@ -134,10 +134,10 @@ class MatchingSolver:
             prob += edges[(gene_node, pathway_node)] <= patient_pathway_nodes[pathway_node]
             prob += edges[(gene_node, pathway_node)] <= gene_nodes[gene_node]
 
-        # Constraint - 4 : for each pathway node only one gene node can be chosen
-        print("Constraint - 4 : for each pathway node only one gene node can be chosen")
+        # Constraint - 4 : for each pathway node only 'gamma' gene node can be chosen
+        print("Constraint - 4 : for each pathway node only 'gamma' gene node can be chosen")
         for pathway_node in top_nodes:
-            prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= 1
+            prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= gamma
 
         # Constraint - 3 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen
         # print("Constraint - 3"
