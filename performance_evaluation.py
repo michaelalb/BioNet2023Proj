@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import seaborn as sns
 
+from LinearProgrammingSolution.GraphHandlers import load_patient_snps
+
 TOP_X = 20
 
 
@@ -25,15 +27,6 @@ def calculate_recall(ranked_list, gold_standard):
         recall_vector.append(intersection / len(gold_standard))
     recall_vector.extend([recall_vector[-1]] * max(0, 100 - len(ranked_list)))
     return recall_vector
-
-
-def load_patient_snps():
-    patient_snps = {}
-    for file in Path('Data/DriverMaxSetApproximation/BaseData').glob('*.csv'):
-        patient_name = file.stem
-        df = pd.read_csv(file, index_col=0)
-        patient_snps[patient_name] = df.columns.tolist()
-    return patient_snps
 
 
 def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
@@ -157,7 +150,7 @@ if __name__ == '__main__':
     results_dir = './ParamOptimizationResults/12_13_2023_05_32/'
     for d in os.listdir(results_dir):
         if d.startswith('alpha'):
-            with open(os.path.join(results_dir, d, 'ranked_genes_lists.json')) as f:
+            with open(os.path.join(results_dir, d, 'SingleRunResults/ranked_genes_lists.json')) as f:
                 ranked_genes_lists = json.load(f)
             alpha = float(d.split('=')[1].replace('_beta_param', ''))
             beta = float(d.split('=')[2])
