@@ -4,6 +4,12 @@ from pathlib import Path
 
 
 class MatchingDataHandler:
+    """
+    This class is responsible for loading the data from the csv files and creating the graph.
+    each patient-pathway is a top-node(0) in the graph, and each snv is a bottom-node(1) in the graph.
+    The edges are weighted by the cell value in the csv file.
+    zero values are not added to the graph.
+    """
     def __init__(self, directory):
         self.directory = Path(directory)
         self._graph = nx.Graph()

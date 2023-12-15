@@ -1,6 +1,8 @@
 import pickle
+from pathlib import Path
 
 import networkx as nx
+import pandas as pd
 
 
 def create_new_bipartite_graph(top_nodes, bottom_nodes, edges):
@@ -121,19 +123,10 @@ def get_rank_per_patient_from_graph(graph, sorted_genes):
     patient_genes = get_patient_genes_from_graph(graph)
     sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes, genes) for
                             patient, genes in patient_genes.items()}
-    # for patient in patient_genes.keys():
-    #     missing_genes = set(all_patient_genes[patient]).difference(set(patient_genes[patient]))
-    #     missing_genes = [gene for gene in missing_genes if gene in PRODIGY_ranking[patient]]
-    #     sorted_missing_genes = sort_list_by_reference(PRODIGY_ranking[patient], missing_genes)
-    #     sorted_patient_genes[patient] = sorted_patient_genes[patient] + sorted_missing_genes
-    # # sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes,PRODIGY_ranking[patient], genes) for
-    # #                         patient, genes in patient_genes.items()}
     return sorted_patient_genes
 
 
 def load_patient_snps():
-    import pandas as pd
-    from pathlib import Path
     patient_snps = {}
     for file in Path('Data/DriverMaxSetApproximation/BaseData').glob('*.csv'):
         patient_name = file.stem
@@ -153,19 +146,3 @@ def get_rank_per_patient_from_base_data(sorted_genes, patient_genes=None):
 
 def sort_list_by_reference(reference_list, unordered_list):
     return sorted(unordered_list, key=reference_list.index)
-
-# def get_rank_per_patient2(graph, sorted_genes):
-#     import json
-#     patient_genes = load_patient_snps()
-#     PRODIGY_ranking = json.load(open('Data//PRODIGY_results.json'))
-#     for patient in patient_genes.keys():
-#         patient_genes[patient] = list(set(patient_genes[patient]).intersection(set(sorted_genes).union(
-#                                                                                set(PRODIGY_ranking[patient]))))
-#     sorted_patient_genes = {patient: sort_list_by_reference(sorted_genes,PRODIGY_ranking[patient], genes) for
-#                             patient, genes in patient_genes.items()}
-#     return sorted_patient_genes
-
-
-# def sort_list_by_reference(reference_list1,reference_list2, unordered_list):
-#     return(sorted([e for e in unordered_list if e in reference_list1], key=reference_list1.index) + \
-#     sorted([e for e in unordered_list if e not in reference_list1], key=reference_list2.index))

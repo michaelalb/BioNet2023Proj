@@ -2,113 +2,23 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-import numpy as np
+import networkx as nx
 
-from WeightedBiPartideGraphMatching.GraphHandlers import *
-from WeightedBiPartideGraphMatching.MatchingDataHandler import MatchingDataHandler
-from WeightedBiPartideGraphMatching.MatchingSolver import MatchingSolver
-from WeightedBiPartideGraphMatching.MatchingVisualizer import *
+from LinearProgrammingSolution.GraphHandlers import load_patient_snps, get_patient_genes_from_graph, \
+    get_rank_per_patient_from_base_data
+from Utils import set_up_param_ranges, run_ilp_analysis, get_sorted_genes_by_wight_from_dict
 from performance_evaluation import check_performances, plot_performances
 
 
-def run_ilp_analysis(path_to_data: str,
-                     should_draw_graph: bool,
-                     alpha: float = 0.2,
-                     beta: float = 0.2,
-                     gamma: float = 1,
-                     should_save_files: bool = True,
-                     base_path: str = './'):
-    matching_data_handler = MatchingDataHandler(path_to_data)
-    print(f'loading data - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-    matching_data_handler.load_data()
-    print(f'creating graph - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-    orig_graph = matching_data_handler.get_graph()
-    matching_solver = MatchingSolver()
-    print(f"saving graph picture - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
-    if should_draw_graph:
-        draw_graph(orig_graph, save=True, name='before.png')
-    print(f"finding min cover set - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
-    cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, adjusted_gene_weights =\
-        matching_solver.find_min_cover_set(orig_graph, alpha, beta,gamma,
-                                           should_save_files=should_save_files,
-                                           base_path=base_path)
-    print(f"saving optimized graph picture - {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')}")
-    if should_draw_graph:
-        draw_graph(new_graph, save=True, name='after.png')
-    return cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights
-
-
-def get_sorted_genes_by_wight_from_graph(optimized_graph: nx.Graph = None, should_save_files: bool = True,
-                                         base_path: str = './'):
-    print(f'calculating gene weights - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-    print(f'loading graph - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-    new_graph = load_graph_from_file('new_graph.pkl') if optimized_graph is None else optimized_graph
-    print(f'calculating gene weights - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-    gene_weights = calculate_gene_edge_weight_sum(new_graph)
-    sorted_gene_names_by_weight = sorted(gene_weights, key=lambda x: gene_weights.get(x), reverse=True)
-    if should_save_files:
-        with open(str(Path(base_path) / 'sorted_gene_names_by_weight.json'), 'w+') as f:
-            json.dump(sorted_gene_names_by_weight, f, indent=4)
-        with open(str(Path(base_path) / 'gene_weights.json'), 'w+') as f:
-            json.dump(gene_weights, f, indent=4)
-    return sorted_gene_names_by_weight, gene_weights
-
-
-def get_sorted_genes_by_wight_from_dict(optimized_gene_weights: dict, should_save_files: bool = True,
-                                        base_path: str = './'):
-    print(f'calculating gene weights - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-    sorted_gene_names_by_weight = sorted(optimized_gene_weights,
-                                         key=lambda x: optimized_gene_weights.get(x), reverse=True)
-    if should_save_files:
-        with open(str(Path(base_path) / 'sorted_gene_names_by_weight.json'), 'w+') as f:
-            json.dump(sorted_gene_names_by_weight, f, indent=4)
-    return sorted_gene_names_by_weight
-
-
-# def get_graph_with_top_k_edges_from_graph_by_weight_sum(optimized_graph: nx.Graph, k: int,
-#                                                         gene_weights: dict = None,
-#                                                         should_draw_graph: bool = False,
-#                                                         should_save_files: bool = True):
-#     patients_with_ranked_genes_by_weight = get_rank_per_patient_from_base_data(optimized_graph=optimized_graph,
-#                                                                                should_save_files=should_save_files)
-#
-#     # print(f'getting top {k} sub graph - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-#     # top_k_sub_graph = get_graph_with_top_k_edges_from_graph_by_weight_sum(optimized_graph, gene_weights, k)
-#     # print(f'drawing graph - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-#     # if should_draw_graph:
-#     #     draw_graph(top_k_sub_graph, save=True, name=f'top_{k}.png')
-#     # if should_save_files:
-#     #     with open('./patients_with_ranked_genes_by_weight.json', 'w+') as f:
-#     #         json.dump(patients_with_ranked_genes_by_weight, f)
-#     #     with open(f'./top_{k}_genes_graph.pkl', 'wb+') as f:
-#     #         pickle.dump(top_k_sub_graph, f)
-#     # print(f'done - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
-#     # return top_k_sub_graph, patients_with_ranked_genes_by_weight
-#     return patients_with_ranked_genes_by_weight
-
-def get_param_range(param_limits: dict, total_number_of_steps: int,
-                    param_name: str = 'gene_param'):
-    if param_limits[param_name].get('strict_vals') is not None:
-        return param_limits[param_name]['strict_vals']
-    param_range = np.arange(param_limits[param_name]['left_bound'],
-                            param_limits[param_name]['right_bound'],
-                            param_limits[param_name]['step_size'])
-    if len(param_range) > total_number_of_steps:
-        param_range = np.linspace(param_limits[param_name]['left_bound'],
-                                  param_limits[param_name]['right_bound'],
-                                  total_number_of_steps)
-    return param_range
-
-
-def set_up_param_ranges(param_limits: dict, total_number_of_steps: int):
-    alpha_param_range = get_param_range(param_limits, total_number_of_steps, 'alpha')
-    beta_param_range = get_param_range(param_limits, total_number_of_steps, 'beta')
-    gamma_param_range = get_param_range(param_limits, total_number_of_steps, 'gamma')
-    return alpha_param_range, beta_param_range, gamma_param_range
-
-
 def param_search(param_limits: dict,
-                 gene_number_to_optimize: int = 5, total_number_of_steps: int = 50):
+                 gene_number_to_optimize: int = 5, total_number_of_steps: int = 50) -> dict:
+    """
+    This function performs a parameter search for the best alpha, beta and gamma parameters for the algorithm.
+    :param param_limits: dictionary with the limits for the parameters - usage explained in main.
+    :param gene_number_to_optimize: number of genes to optimize for - looking at precision of the n-th gene.
+    :param total_number_of_steps: maximum number of steps to perform for each parameter.
+    :return: dictionary with results of the parameter search.
+    """
     steps_dict = {'search_results': {},
                   "gene_number_to_optimize": gene_number_to_optimize}
     alpha_param_range, beta_param_range, gamma_param_range = set_up_param_ranges(param_limits, total_number_of_steps)
@@ -125,7 +35,8 @@ def param_search(param_limits: dict,
             for gamma_param in gamma_param_range:
                 current_run_path = Path(base_run_path / f'{alpha_param=}_{beta_param=}_{gamma_param=}')
                 current_run_path.mkdir(parents=True, exist_ok=True)
-                print(f'Optimizing {alpha_param=} {beta_param=} {gamma_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
+                print(
+                    f'Optimizing {alpha_param=} {beta_param=} {gamma_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
                 cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
                     run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
                                      should_draw_graph=False,
@@ -136,14 +47,11 @@ def param_search(param_limits: dict,
                                      base_path=str(current_run_path))
 
                 sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
-                                                                                should_save_files=True,
-                                                                                base_path=str(current_run_path))
+                                                                                  should_save_files=True,
+                                                                                  base_path=str(current_run_path))
                 optimized_patient_genes = get_patient_genes_from_graph(new_graph)
-                # sorted_gene_names_by_weight, gene_weights = \
-                #     get_sorted_genes_by_wight_from_graph(new_graph, should_save_files=True, base_path=str(current_run_path))
-
                 ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
-                                                                        optimized_patient_genes)
+                                                                         optimized_patient_genes)
                 with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
                     json.dump(ranked_genes_lists, f, indent=4)
                 our_performances = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
@@ -185,17 +93,26 @@ def param_search(param_limits: dict,
         "f1": v["f1"]} for k, v in steps_dict['search_results'].items()}
     perf_dict['PRODIGY'] = PRODIGY_performances
     plot_performances(perf_dict, save_path=str(base_run_path / 'all_performances.png'))
-    print(f'best performance of {best_performance} - with params {best_performance_alpha_param=} {best_performance_beta_param=} {best_performance_gamma_param=}')
+    print(
+        f'best performance of {best_performance} - with params {best_performance_alpha_param=} {best_performance_beta_param=} {best_performance_gamma_param=}')
     return steps_dict
 
 
-def run_single_ilp_analysis(alpha: float, beta: float, current_run_path: Path):
-    patient_snps = load_patient_snps()
+def run_single_ilp_analysis(alpha: float, beta: float, gamma: float, current_run_path: Path):
+    """
+    runs a single ILP analysis with the given parameters.
+    :param alpha: controls the weight multiplier of edges by gene globality.
+    :param beta: controls the weight multiplier of edges by gene locality.
+    :param gamma: controls the number of genes allowed to be assigned to each patient_pathway.
+    :param current_run_path: the path to save the results to.
+    :return: None the results are saved to the given path.
+    """
     cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
         run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
                          should_draw_graph=False,
                          alpha=alpha,
                          beta=beta,
+                         gamma=gamma,
                          should_save_files=True,
                          base_path=str(current_run_path))
 
@@ -203,58 +120,71 @@ def run_single_ilp_analysis(alpha: float, beta: float, current_run_path: Path):
                                                                       should_save_files=True,
                                                                       base_path=str(current_run_path))
     optimized_patient_genes = get_patient_genes_from_graph(new_graph)
-    # sorted_gene_names_by_weight, gene_weights = \
-    #     get_sorted_genes_by_wight_from_graph(new_graph, should_save_files=True, base_path=str(current_run_path))
-    #
     ranked_genes_lists = get_rank_per_patient_from_base_data(sorted_gene_names_by_weight,
                                                              optimized_patient_genes)
     with open(str(current_run_path / 'ranked_genes_lists.json'), 'w+') as f:
         json.dump(ranked_genes_lists, f, indent=4)
 
 
-def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Data/DriverMaxSetApproximation/BaseData',
-         should_draw_graph: bool = False, should_calc_gene_weights: bool = False, should_calc_sub_graph: bool = False,
-         gene_weights: dict = None, new_graph: nx.Graph = None,
-         k: int = 20, should_perform_param_search: bool = False):
+def optimization_main(should_calc_optimized_graph: bool = False,
+                      path_to_base_data: str = 'Data/DriverMaxSetApproximation/BaseData',
+                      should_draw_graph: bool = False, should_calc_gene_weights: bool = False,
+                      new_graph: nx.Graph = None, should_perform_param_search: bool = False,
+                      param_limits: dict = None) -> None:
+    """
+    This is the main orchestrator of the project. It is responsible for running the different parts of the project.
+    :param should_calc_optimized_graph: This flag indicates whether the optimized graph should be calculated from
+    scratch - This parameter should be used if you'd like to simply run the ILP analysis only.
+    :param should_calc_gene_weights: This flag indicates whether we should use the new graph created / provided by the
+    ILP to get ranks per patient. Can either be used with should_calc_optimized_graph or with a provided graph using the
+    new_graph param.
+    :param should_perform_param_search: This flag indicates whether we should perform a parameter search for the ILP.
+    Must be used with param_limits.
+    :param should_draw_graph: This flag indicates whether we should draw the graphs, original and optimized.
+    :param path_to_base_data: This is the path to the base data folder, it is used to save the files from all steps.
+    :param new_graph: This is a graph that is provided to the function, it is used to get ranks per patient - can be
+    used with should_calc_gene_weights.
+    :param param_limits: This is a dictionary that contains the limits for the parameter search. Must be used with
+    should_perform_param_search.
+    :return: None - the communication with the function output is done through the files that are saved.
+    """
     if should_calc_optimized_graph:
         cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
             run_ilp_analysis(path_to_data=path_to_base_data,
                              should_draw_graph=should_draw_graph)
     if should_calc_gene_weights:
-        sorted_gene_names_by_weight, gene_weights = get_rank_per_patient_from_base_data(new_graph)
-
-    # if should_calc_sub_graph:
-    #     # for sub graphing
-    #     top_k_sub_graph, patients_with_ranked_genes_by_weight = get_graph_with_top_k_edges_from_graph_by_weight_sum(
-    #         new_graph, k=k, gene_weights=gene_weights, should_draw_graph=False, should_save_files=False)
+        sorted_gene_names_by_weight = get_rank_per_patient_from_base_data(new_graph)
 
     if should_perform_param_search:
-        # for param search
-        param_limits = {
-            'alpha':
-                {
-                    'strict_vals': [2, 5, 10, 25, 0],
-                    # 'strict_vals': [0],
-                    'left_bound': 0.1,
-                    'right_bound': 0.15,
-                    'step_size': 0.05
-                },
-            'beta':
-                {
-                    'strict_vals': [1.2, 5, 10, 20, 0],
-                    # 'strict_vals': [0],
-                    'left_bound': 0.1,
-                    'right_bound': 0.15,
-                    'step_size': 0.05
-                },
-            'gamma':
-                {
-                    'strict_vals': [2, 3, 5, 10, 20]
-                }
-        }
+        assert param_limits is not None, 'param_limits must be provided for param search'
         param_search(param_limits=param_limits, gene_number_to_optimize=5, total_number_of_steps=50)
 
 
 if __name__ == '__main__':
-    main(should_perform_param_search=True)
-    # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('.'))
+    # for param search - alpha, beta, gamma
+    # strict vals - values to check for each param - overrides left_bound, right_bound, step_size
+    # left_bound - left bound for param search
+    # right_bound - right bound for param search
+    # step_size - step size for param search
+    param_limits = {
+        'alpha':
+            {
+                'strict_vals': [2, 5, 10, 25, 0],
+                'left_bound': 0.1,
+                'right_bound': 0.15,
+                'step_size': 0.05
+            },
+        'beta':
+            {
+                'strict_vals': [1.2, 5, 10, 20, 0],
+                'left_bound': 0.1,
+                'right_bound': 0.15,
+                'step_size': 0.05
+            },
+        'gamma':
+            {
+                'strict_vals': [2, 3, 5, 10, 20]
+            }
+    }
+    optimization_main(should_perform_param_search=True)
+    # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))

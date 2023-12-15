@@ -6,10 +6,13 @@ import json
 import networkx as nx
 import pickle
 
-from WeightedBiPartideGraphMatching.GraphHandlers import create_new_bipartite_graph
+from LinearProgrammingSolution.GraphHandlers import create_new_bipartite_graph
 
 
 class MatchingSolver:
+    """
+    This class solves the ILP problem of finding the maximum weighted matching in a bipartite graph.
+    """
 
     def _custom_sort(self, t):
         "sort so gene  nodes are first, then pathway nodes"
@@ -51,6 +54,9 @@ class MatchingSolver:
                                sorted_edges, sorted_edges_data, chosen_edges, not_cover_set,
                                new_graph, gene_weights, gene_adjustments, gene_wight_multipliers,
                                should_save_files=True, base_path='./'):
+        """
+        a wrapper function for printing and saving the ILP results.
+        """
         # print optimization results
         print(f"choose {len(bottom_cover_set)} genes out of {len(bottom_nodes)} and {len(top_cover_set)} pathways out of {len(top_nodes)}")
         print(f"total weight: {prob.objective.value()}")
@@ -77,6 +83,29 @@ class MatchingSolver:
                 pickle.dump(new_graph, f)
 
     def find_min_cover_set(self, graph: nx.Graph, alpha, beta, gamma, should_save_files=True, base_path='./'):
+        """
+        This function solves the ILP problem of finding the maximum weighted matching in a bipartite graph.
+        :param graph: The original graph.
+        :param alpha: a parameter to control the globality of driver genes you wish to optimize for.
+        It does so by adjusting the weights of the edges by the fraction of distinct patients affected by the gene
+        across the entire cohort.
+        :param beta: a parameter to control the locality of driver genes you wish to optimize for.
+        It does so by adjusting the weights of the edges by the fraction of distinct pathways within a sepcific patient
+        affected by the gene.
+        :param gamma: a parameter to control the biological assumption you with to optimize.
+        It sets the final amount of genes allowed to affect each pathway in the optimized graph.
+        :param should_save_files: a boolean parameter to control whether to save the results to a file.
+        :param base_path: the path to save the results to.
+        :return:
+        cover set - set of nodes that are in the min cover set.
+        not cover set - set of nodes that are not in the min cover set.
+        bottom cover set - set of nodes that are in the min cover set and are on the "bottom" of the graph - genes.
+        top cover set - set of nodes that are in the min cover set and are on the "top" of the graph -
+        patients_pathway pairs.
+        new_graph - the graph after optimization.
+        orig_graph - the original graph.
+        adjusted_gene_weights - the weights of the edges after optimization.
+        """
         print(f"Starting ILP with {alpha=}, {beta=}, {gamma=}")
         prob = LpProblem("Maximum_Weight_Cover_Set", LpMaximize)
         
@@ -138,12 +167,6 @@ class MatchingSolver:
         print("Constraint - 4 : for each pathway node only 'gamma' gene node can be chosen")
         for pathway_node in top_nodes:
             prob += lpSum([edges[(gene_node, pathway_node)] for gene_node in graph.neighbors(pathway_node)]) <= gamma
-
-        # Constraint - 3 : for each gene and patient pair, if any pathway node is chosen, the patient must be chosen
-        # print("Constraint - 3"
-        #       ": for each gene and patient pair, if any pathway node is chosen, the patient must be chosen")
-        # for (gene, (patient_name, pathway)) in sorted_edges:
-        #     prob += gene_patient_nodes[(gene, patient_name)] >= edges[(gene, (patient_name, pathway))]
 
         # Constraint - 5 : dont allow disconnected nodes
         print("Constraint - 5 : dont allow disconnected nodes")

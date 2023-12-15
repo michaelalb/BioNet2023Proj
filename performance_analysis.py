@@ -33,7 +33,7 @@ def agreement_analysis():
     ranked_gene_lists = {}
     for subdir in os.listdir(results_directory):
         if str(subdir).startswith("gene_"):
-            file_path = os.path.join(results_directory, subdir, "ranked_genes_lists.json")
+            file_path = os.path.join(results_directory, subdir, "SingleRunResults/ranked_genes_lists.json")
             if not os.path.isfile(file_path):
                 continue
             with open(file_path, 'r') as f:
@@ -69,14 +69,14 @@ def agreement_analysis():
 
 def get_points(results_directory):
     patients_per_gene = {}
-    with open(os.path.join(results_directory, 'ranked_genes_lists.json')) as f:
+    with open(os.path.join(results_directory, 'SingleRunResults/ranked_genes_lists.json')) as f:
         ranked_genes_lists = json.load(f)
     for patient, ranked_genes_list in ranked_genes_lists.items():
         for gene in ranked_genes_list:
             patients_per_gene[gene] = patients_per_gene.get(gene, []) + [patient]
     patients_per_gene = {gene: len(patients) for gene, patients in patients_per_gene.items()}
     petient_count_per_rank = {}
-    with open(os.path.join(results_directory, 'ranked_genes_lists.json')) as f:
+    with open(os.path.join(results_directory, 'SingleRunResults/ranked_genes_lists.json')) as f:
         ranked_genes_lists = json.load(f)
     for ranked_genes_list in ranked_genes_lists.values():
         for i, gene in enumerate(ranked_genes_list):
@@ -92,7 +92,7 @@ def get_points(results_directory):
 def plot_gene_list_length_distribution(results_directory,file_regex ,parm_regex, param_name):
     gene_list_lengths_by_param = {}
     for subdir in Path(results_directory).glob(file_regex):
-        with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+        with open(os.path.join(subdir, 'SingleRunResults/ranked_genes_lists.json')) as f:
             ranked_genes_lists = json.load(f)
         gene_list_lengths = [len(gene_list) for gene_list in ranked_genes_lists.values()]
         param = float(re.search(parm_regex, str(subdir)).group(1))
@@ -107,7 +107,7 @@ def plot_gene_list_length_distribution(results_directory,file_regex ,parm_regex,
 def plot_unique_genes_count_distribution(results_directory,file_regex ,parm_regex, param_name):
     unqiue_genes_count = {}
     for subdir in Path(results_directory).glob(file_regex):
-        with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+        with open(os.path.join(subdir, 'SingleRunResults/ranked_genes_lists.json')) as f:
             ranked_genes_lists = json.load(f)
         unqiue_genes = set([gene for list in ranked_genes_lists.values() for gene in list])
         param = float(re.search(parm_regex, str(subdir)).group(1))
@@ -122,7 +122,7 @@ def plot_unique_genes_count_distribution(results_directory,file_regex ,parm_rege
 def plot_genes_occurrence_distribution(results_directory,file_regex ,parm_regex, param_name):
     gene_occurrences_by_param = {}
     for subdir in Path(results_directory).glob(file_regex):
-        with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+        with open(os.path.join(subdir, 'SingleRunResults/ranked_genes_lists.json')) as f:
             ranked_genes_lists = json.load(f)
         gene_occurrences = collections.Counter([gene for list in ranked_genes_lists.values() for gene in list])
         param = float(re.search(parm_regex, str(subdir)).group(1))

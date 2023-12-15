@@ -4,6 +4,14 @@ from networkx.algorithms import bipartite
 
 
 def draw_graph(graph, patients=None, save=False, name=None):
+    """
+    Draw a bipartite graph
+    :param graph: the graph to draw
+    :param patients: allows for a subset of patients to be drawn
+    :param save: whether to save the graph or show it
+    :param name: the name of the file to save the graph to
+    :return:
+    """
     graph = graph.copy()
     plt.figure(figsize=(62, 62))
     patient_pathway = [name for name, data in graph.nodes(data=True) if data['bipartite'] == 0]
