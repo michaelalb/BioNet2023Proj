@@ -233,7 +233,7 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
             'alpha':
                 {
                     #'strict_vals': [0.2, 0.3, 0.5, 0.8, 1.2, 1.5, 2, 10, 50, 0], # 1, 0.01, 0.05, 0.1,
-                    'strict_vals': [0],
+                    'strict_vals': [0.01,0.05,0.1,0.2,0.5],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
@@ -241,14 +241,14 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
             'beta':
                 {
                     #'strict_vals': [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8, 1, 1.2, 1.5, 2, 10, 50, 0],
-                    'strict_vals': [0],
+                    'strict_vals': [0.01,0.05,0.1,0.2,0.5],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
                 },
             'gamma':
                 {
-                    'strict_vals': [2],
+                    'strict_vals':  [2, 3, 10, 20],
                 }
         }
         param_search(param_limits=param_limits, gene_number_to_optimize=5, total_number_of_steps=50)
