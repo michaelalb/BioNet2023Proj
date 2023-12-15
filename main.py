@@ -128,12 +128,12 @@ def param_search(param_limits: dict,
                 print(f'Optimizing {alpha_param=} {beta_param=} {gamma_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
                 cover_set, not_cover_set, bottom_cover_set, top_cover_set, new_graph, orig_graph, adjusted_gene_weights = \
                     run_ilp_analysis(path_to_data='Data/DriverMaxSetApproximation/BaseData',
-                                    should_draw_graph=False,
-                                    should_save_files=True,
-                                    alpha=alpha_param,
-                                    beta=beta_param,
-                                    gamma=gamma_param,
-                                    base_path=str(current_run_path))
+                                     should_draw_graph=False,
+                                     should_save_files=True,
+                                     alpha=alpha_param,
+                                     beta=beta_param,
+                                     gamma=gamma_param,
+                                     base_path=str(current_run_path))
 
                 sorted_gene_names_by_weight = get_sorted_genes_by_wight_from_dict(adjusted_gene_weights,
                                                                                 should_save_files=True,
@@ -173,7 +173,8 @@ def param_search(param_limits: dict,
         perf_dict = {k: {
             "precision": v["precision"],
             "recall": v["recall"],
-            "f1": v["f1"]} for k, v in steps_dict['search_results'].items()}
+            "f1": v["f1"]} for k, v in steps_dict['search_results'].items()
+            if str(k).find(str(alpha_param)) != -1 and str(k).find(str(alpha_param)) < str(k).find(',')}
         perf_dict['PRODIGY'] = PRODIGY_performances
         plot_performances(perf_dict, save_path=str(base_run_path / f'all_performances_{alpha_param=}.png'))
     with open(str(base_run_path / 'param_search.json'), 'w+') as f:
@@ -232,23 +233,23 @@ def main(should_calc_optimized_graph: bool = False, path_to_base_data: str = 'Da
         param_limits = {
             'alpha':
                 {
-                    #'strict_vals': [0.2, 0.3, 0.5, 0.8, 1.2, 1.5, 2, 10, 50, 0], # 1, 0.01, 0.05, 0.1,
-                    'strict_vals': [0],
+                    'strict_vals': [2, 5, 10, 25, 0],
+                    # 'strict_vals': [0],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
                 },
             'beta':
                 {
-                    #'strict_vals': [0.01, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8, 1, 1.2, 1.5, 2, 10, 50, 0],
-                    'strict_vals': [0],
+                    'strict_vals': [1.2, 5, 10, 20, 0],
+                    # 'strict_vals': [0],
                     'left_bound': 0.1,
                     'right_bound': 0.15,
                     'step_size': 0.05
                 },
             'gamma':
                 {
-                    'strict_vals': [2],
+                    'strict_vals': [2, 3, 5, 10, 20]
                 }
         }
         param_search(param_limits=param_limits, gene_number_to_optimize=5, total_number_of_steps=50)
