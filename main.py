@@ -190,9 +190,10 @@ if __name__ == '__main__':
     }
     # performance_evaluation_main()
     # parameters_analysis_main()
-    # optimization_main(should_perform_param_search=True)
+    optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))
     # optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.01, beta=0.01,gamma=20, current_run_path=Path('./SingleRunResults/'))
-    plot_gamma_tradeoff(r"ParamOptimizationResults/ParamSearchRes", 0.01, 0.5)
-    best_perf = get_best_perf(r"ParamOptimizationResults/ParamSearchRes")
+    # plot_gamma_tradeoff(r"./ParamOptimizationResults/ParamSearchRes/param_search.json", 0.01, 0.5)
+    # best_perf = get_best_perf(r"./ParamOptimizationResults/ParamSearchRes/param_search.json")
+

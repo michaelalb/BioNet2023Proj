@@ -103,8 +103,8 @@ def parameters_analysis_main():
     plot_top_genes_occurrences_table(res_by_gamma, 'gamma')
 
 
-def get_best_perf(results_directory: str, target_value_index: int = 0) -> dict:
-    with(open(results_directory)) as f:
+def get_best_perf(results_file: str, target_value_index: int = 0) -> dict:
+    with(open(results_file)) as f:
         all_res_dict = json.load(f)['search_results']
     # get prodigy results
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
