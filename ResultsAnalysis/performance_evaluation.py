@@ -10,6 +10,7 @@ import Utils
 
 TOP_X = 20
 
+
 def calculate_precision(ranked_list, gold_standard):
     """
     calculate the fraction of the first i genes that are known drivers for every length i
@@ -24,6 +25,7 @@ def calculate_precision(ranked_list, gold_standard):
     precision_vector.extend([precision_vector[-1]] * max(0, 100 - len(ranked_list)))
     return precision_vector
 
+
 def calculate_recall(ranked_list, gold_standard):
     """
     caculate the fraction of known drivers that are in the first i genes for every length i
@@ -37,6 +39,7 @@ def calculate_recall(ranked_list, gold_standard):
         recall_vector.append(intersection / len(gold_standard))
     recall_vector.extend([recall_vector[-1]] * max(0, 100 - len(ranked_list)))
     return recall_vector
+
 
 def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
     """
@@ -84,24 +87,25 @@ def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
         "f1": f1_means
     }
 
-def plot_performances(performances, sorted, save_path=None):
+
+def plot_performances(performances, is_sorted, save_path=None):
     """
     plot the performances of the different parameters
     :param performances: a dictionary of performances for every parameter combination and PRODIGY
-    :param sorted: whether the dictionary is sorted by a parameter values and should be colored accordingly
+    :param is_sorted: whether the dictionary is sorted by a parameter values and should be colored accordingly
     :param save_path: path to save the plot to or None to show the plot
     """
     sns.set()
-    figure, axis = plt.subplots(1, 3, figsize=(16,9))
-    if sorted:
+    figure, axis = plt.subplots(1, 3, figsize=(16, 9))
+    if is_sorted:
         colormap = plt.cm.get_cmap('RdBu', len(performances) -1)
     for i, metric in enumerate(['precision', 'recall', 'f1']):
         plot = axis[i]
         for j, (name, performance) in enumerate(performances.items()):
-            lines = plot.plot(range(len(performance[metric])),performance[metric], label=name, marker='o',markersize=3)
-            if sorted:
+            lines = plot.plot(range(len(performance[metric])), performance[metric], label=name, marker='o',markersize=3)
+            if is_sorted:
                 lines[0].set_color(colormap(j) if name != 'PRODIGY' else 'black')
-        plot.set_xticks(range(0,TOP_X,2))
+        plot.set_xticks(range(0, TOP_X, 2))
         plot.set_xlabel('Top N Genes')
         plot.set_ylabel('Average {}'.format(metric.capitalize()))
         plot.set_title(metric.capitalize())
@@ -112,6 +116,7 @@ def plot_performances(performances, sorted, save_path=None):
         plt.savefig(save_path)
     else:
         plt.show()
+
 
 def performance_evaluation_main():
     patient_snps = load_patient_snps()
@@ -125,4 +130,4 @@ def performance_evaluation_main():
     all_performances = {alpha: all_performances[(alpha, beta)] for alpha, beta in all_performances.keys() if beta == 0}
     all_performances = dict(sorted(all_performances.items(), key=lambda item: item[0]))
     all_performances['PRODIGY'] = PRODIGY_performances
-    plot_performances(all_performances, sorted=True)
+    plot_performances(all_performances, is_sorted=True)

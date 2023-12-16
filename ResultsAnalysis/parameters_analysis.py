@@ -1,9 +1,16 @@
 import collections
+import json
+import os
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import Utils
-    
+from LinearProgrammingSolution.GraphHandlers import load_patient_snps
+from ResultsAnalysis.performance_evaluation import check_performances, plot_performances
+
+
 def plot_gene_list_length_distribution(results, param_name):
     """
     This function plots the distribution of gene list lengths for every parameter value.
@@ -74,6 +81,7 @@ def plot_top_genes_occurrences_table(results, param_name,TOP_X = 6):
     sns.heatmap(data=df,annot=True, cmap='Blues', fmt='g')
     plt.show()
 
+
 def parameters_analysis_main():
     res = Utils.load_results(r"ParamOptimizationResults/12_13_2023_05_32")
     res_by_alpha = {alpha: res[(alpha, beta)] for alpha, beta in res.keys() if (beta == 0)}
@@ -93,10 +101,59 @@ def parameters_analysis_main():
     plot_top_genes_occurrences_table(res_by_alpha, 'alpha')
     plot_top_genes_occurrences_table(res_by_beta, 'beta')
     plot_top_genes_occurrences_table(res_by_gamma, 'gamma')
-    
-    
-    
-    
-    
-    
-    
+
+
+def get_best_perf(results_directory: str, target_value_index: int = 0) -> dict:
+    with(open(results_directory)) as f:
+        all_res_dict = json.load(f)['search_results']
+    # get prodigy results
+    gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
+    PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
+    patient_snps = load_patient_snps()
+    PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
+    # get best results
+    if target_value_index <= 0 or target_value_index > len(gold_standard_drivers):
+        target_value_index = len(gold_standard_drivers)
+    better_counter = 0
+    best_perf = {}
+    for specific_res in all_res_dict.values():
+        better = True
+        for per_metric in ['precision', 'recall', 'f1']:
+            if any(PRODIGY_performances[per_metric][:target_value_index] > specific_res[per_metric][
+                                                                           :target_value_index]):
+                better = False
+        if better:
+            better_counter += 1
+            print(
+                f'fount better perf than prodigy: {specific_res["alpha_param"]=}, {specific_res["beta_param"]=}, {specific_res["gamma_param"]=}')
+            if best_perf == {}:
+                best_perf = specific_res
+            else:
+                best = True
+                for per_metric in ['precision', 'recall', 'f1']:
+                    if best_perf[per_metric][:target_value_index] > specific_res[per_metric][:target_value_index]:
+                        best = False
+                if best:
+                    best_perf = specific_res
+    print(f'found {better_counter} better results than prodigy')
+    print(f'best perf was: {best_perf["alpha_param"]=}, {best_perf["beta_param"]=}, {best_perf["gamma_param"]=}')
+    return best_perf
+
+
+def plot_gamma_tradeoff(results_file, alpha_val, beta_val):
+    gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
+    PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
+    patient_snps = load_patient_snps()
+    PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
+    with(open(results_file)) as f:
+        all_res_dict = json.load(f)['search_results']
+    all_res_dict = {key: value for key, value in all_res_dict.items() if
+                    value['alpha_param'] == alpha_val and value['beta_param'] == beta_val}
+    perf_dict = {k: {
+        "precision": v["precision"],
+        "recall": v["recall"],
+        "f1": v["f1"]} for k, v in all_res_dict.items()}
+    perf_dict['PRODIGY'] = PRODIGY_performances
+    results_directory = os.path.dirname(results_file)
+    plot_performances(perf_dict, is_sorted=False,
+                      save_path=str(Path(results_directory) / f'gamma_comp_{alpha_val=}_{beta_val=}.png'))

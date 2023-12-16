@@ -8,7 +8,7 @@ from LinearProgrammingSolution.GraphHandlers import load_patient_snps, get_patie
     get_rank_per_patient_from_base_data
 from Utils import set_up_param_ranges, run_ilp_analysis, get_sorted_genes_by_wight_from_dict
 from ResultsAnalysis.performance_evaluation import check_performances, plot_performances, performance_evaluation_main
-from ResultsAnalysis.parameters_analysis import parameters_analysis_main
+from ResultsAnalysis.parameters_analysis import parameters_analysis_main, plot_gamma_tradeoff, get_best_perf
 
 
 def param_search(param_limits: dict,
@@ -78,14 +78,15 @@ def param_search(param_limits: dict,
                 print(f'plotting perf for {alpha_param=} - {datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}')
                 plot_performances(
                     {'our algotithem': our_performances, 'PRODIGY': PRODIGY_performances},
-                    save_path=str(current_run_path / 'performances.png'))
+                    save_path=str(current_run_path / 'performances.png'), is_sorted=False)
         perf_dict = {k: {
             "precision": v["precision"],
             "recall": v["recall"],
             "f1": v["f1"]} for k, v in steps_dict['search_results'].items()
             if str(k).find(str(alpha_param)) != -1 and str(k).find(str(alpha_param)) < str(k).find(',')}
         perf_dict['PRODIGY'] = PRODIGY_performances
-        plot_performances(perf_dict, save_path=str(base_run_path / f'all_performances_{alpha_param=}.png'))
+        plot_performances(perf_dict, save_path=str(base_run_path / f'all_performances_{alpha_param=}.png'),
+                          is_sorted=False)
     with open(str(base_run_path / 'param_search.json'), 'w+') as f:
         json.dump(steps_dict, f, indent=4)
     perf_dict = {k: {
@@ -93,7 +94,7 @@ def param_search(param_limits: dict,
         "recall": v["recall"],
         "f1": v["f1"]} for k, v in steps_dict['search_results'].items()}
     perf_dict['PRODIGY'] = PRODIGY_performances
-    plot_performances(perf_dict, save_path=str(base_run_path / 'all_performances.png'))
+    plot_performances(perf_dict, save_path=str(base_run_path / 'all_performances.png'), is_sorted=False)
     print(
         f'best performance of {best_performance} - with params {best_performance_alpha_param=} {best_performance_beta_param=} {best_performance_gamma_param=}')
     return steps_dict
@@ -187,9 +188,11 @@ if __name__ == '__main__':
                 'strict_vals': [1]
             }
     }
-    performance_evaluation_main()
+    # performance_evaluation_main()
     # parameters_analysis_main()
     # optimization_main(should_perform_param_search=True)
     # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))
-    optimization_main(should_perform_param_search=True, param_limits=param_limits)
+    # optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.01, beta=0.01,gamma=20, current_run_path=Path('./SingleRunResults/'))
+    plot_gamma_tradeoff(r"ParamOptimizationResults/ParamSearchRes", 0.01, 0.5)
+    best_perf = get_best_perf(r"ParamOptimizationResults/ParamSearchRes")
