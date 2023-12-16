@@ -170,24 +170,26 @@ if __name__ == '__main__':
     param_limits = {
         'alpha':
             {
-                'strict_vals': [2, 5, 10, 25, 0],
+                'strict_vals': [25, 0],
                 'left_bound': 0.1,
                 'right_bound': 0.15,
                 'step_size': 0.05
             },
         'beta':
             {
-                'strict_vals': [1.2, 5, 10, 20, 0],
+                'strict_vals': [0.01, 0.05, 0.1, 0.2, 0.5, 2, 5, 10, 25, 0],
                 'left_bound': 0.1,
                 'right_bound': 0.15,
                 'step_size': 0.05
             },
         'gamma':
             {
-                'strict_vals': [2, 3, 5, 10, 20]
+                'strict_vals': [1]
             }
     }
     performance_evaluation_main()
     # parameters_analysis_main()
     # optimization_main(should_perform_param_search=True)
     # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))
+    optimization_main(should_perform_param_search=True, param_limits=param_limits)
+    # run_single_ilp_analysis(alpha=0.01, beta=0.01,gamma=20, current_run_path=Path('./SingleRunResults/'))
