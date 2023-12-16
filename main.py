@@ -7,7 +7,8 @@ import networkx as nx
 from LinearProgrammingSolution.GraphHandlers import load_patient_snps, get_patient_genes_from_graph, \
     get_rank_per_patient_from_base_data
 from Utils import set_up_param_ranges, run_ilp_analysis, get_sorted_genes_by_wight_from_dict
-from performance_evaluation import check_performances, plot_performances
+from ResultsAnalysis.performance_evaluation import check_performances, plot_performances, performance_evaluation_main
+from ResultsAnalysis.parameters_analysis import parameters_analysis_main
 
 
 def param_search(param_limits: dict,
@@ -186,5 +187,7 @@ if __name__ == '__main__':
                 'strict_vals': [2, 3, 5, 10, 20]
             }
     }
-    optimization_main(should_perform_param_search=True)
+    performance_evaluation_main()
+    # parameters_analysis_main()
+    # optimization_main(should_perform_param_search=True)
     # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))

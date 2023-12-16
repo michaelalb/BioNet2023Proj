@@ -3,8 +3,9 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from LinearProgrammingSolution.GraphHandlers import load_patient_snps
 
+
+from LinearProgrammingSolution.GraphHandlers import load_patient_snps
 import Utils
 
 TOP_X = 20
@@ -84,6 +85,12 @@ def check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers):
     }
 
 def plot_performances(performances, sorted, save_path=None):
+    """
+    plot the performances of the different parameters
+    :param performances: a dictionary of performances for every parameter combination and PRODIGY
+    :param sorted: whether the dictionary is sorted by a parameter values and should be colored accordingly
+    :param save_path: path to save the plot to or None to show the plot
+    """
     sns.set()
     figure, axis = plt.subplots(1, 3, figsize=(16,9))
     if sorted:
@@ -106,8 +113,7 @@ def plot_performances(performances, sorted, save_path=None):
     else:
         plt.show()
 
-
-if __name__ == '__main__':
+def performance_evaluation_main():
     patient_snps = load_patient_snps()
     PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
