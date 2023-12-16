@@ -1,3 +1,5 @@
+import os
+import re
 import json
 from datetime import datetime
 from typing import Union, Tuple
@@ -131,3 +133,20 @@ def set_up_param_ranges(param_limits: dict, total_number_of_steps: int) -> Tuple
     beta_param_range = get_param_range(param_limits, total_number_of_steps, 'beta')
     gamma_param_range = get_param_range(param_limits, total_number_of_steps, 'gamma')
     return alpha_param_range, beta_param_range, gamma_param_range
+
+def load_results(results_dir: str) -> dict:
+    """
+    This function loads the results from a given directory.
+    :param results_dir: directory to load the results from.
+    :return: dictionary with param combinations as keys and results as valus.
+    """
+    results = {}
+    for subdir in os.scandir(results_dir):
+        if subdir.is_dir():
+            with open(os.path.join(subdir, 'ranked_genes_lists.json')) as f:
+                ranked_genes_lists = json.load(f)
+            pattern = r'([a-z]+)_param=([\d.]+)'
+            matches = re.findall(pattern, subdir.name)
+            params = tuple([(float(value)) for param, value in matches])
+            results[params] = ranked_genes_lists
+    return results
