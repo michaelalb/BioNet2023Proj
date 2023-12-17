@@ -103,7 +103,10 @@ def parameters_analysis_main():
     plot_top_genes_occurrences_table(res_by_gamma, 'gamma')
 
 
-def get_best_perf(results_file: str, target_value_index: int = 0) -> dict:
+def get_best_perf(results_file: str, target_value_index: int = 0,
+                  required_metrics=None) -> dict:
+    required_metrics = ['precision', 'recall', 'f1'] if required_metrics is None else required_metrics
+    # required_metrics_str = '_'.join(required_metrics)
     with(open(results_file)) as f:
         all_res_dict = json.load(f)['search_results']
     # get prodigy results
@@ -118,20 +121,20 @@ def get_best_perf(results_file: str, target_value_index: int = 0) -> dict:
     best_perf = {}
     for specific_res in all_res_dict.values():
         better = True
-        for per_metric in ['precision', 'recall', 'f1']:
-            if any(PRODIGY_performances[per_metric][:target_value_index] > specific_res[per_metric][
-                                                                           :target_value_index]):
+        for per_metric in required_metrics:
+            if PRODIGY_performances[per_metric][target_value_index] > specific_res[per_metric][target_value_index]:
                 better = False
         if better:
             better_counter += 1
             print(
                 f'fount better perf than prodigy: {specific_res["alpha_param"]=}, {specific_res["beta_param"]=}, {specific_res["gamma_param"]=}')
+            print(specific_res['recall'][target_value_index])
             if best_perf == {}:
                 best_perf = specific_res
             else:
                 best = True
-                for per_metric in ['precision', 'recall', 'f1']:
-                    if best_perf[per_metric][:target_value_index] > specific_res[per_metric][:target_value_index]:
+                for per_metric in required_metrics:
+                    if best_perf[per_metric][target_value_index] > specific_res[per_metric][target_value_index]:
                         best = False
                 if best:
                     best_perf = specific_res
