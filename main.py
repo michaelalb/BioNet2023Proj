@@ -188,12 +188,16 @@ if __name__ == '__main__':
                 'strict_vals': [1]
             }
     }
-    # performance_evaluation_main(r'ParamOptimizationResults\ParamSearchRes')
-    parameters_analysis_main(r'ParamOptimizationResults\ParamSearchRes')
+    # performance_evaluation_main()
+    # parameters_analysis_main()
     # optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))
     # optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.01, beta=0.01,gamma=20, current_run_path=Path('./SingleRunResults/'))
     # plot_gamma_tradeoff(r"./ParamOptimizationResults/ParamSearchRes/param_search.json", 0.01, 0.5)
-    # best_perf = get_best_perf(r"./ParamOptimizationResults/ParamSearchRes/param_search.json")
+    best_perf = get_best_perf(r"./ParamOptimizationResults/ParamSearchRes/param_search.json", target_value_index=5,
+                              required_metrics=['recall'])
+    print(best_perf)
 
+# best 6th precision - best perf was: best_perf["alpha_param"]=10, best_perf["beta_param"]=2, best_perf["gamma_param"]=1
+# best 6th recall - best perf was: best_perf["alpha_param"]=0, best_perf["beta_param"]=10, best_perf["gamma_param"]=20
