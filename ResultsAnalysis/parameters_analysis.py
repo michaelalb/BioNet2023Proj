@@ -134,7 +134,7 @@ def get_best_perf(results_file: str, target_value_index: int = 0,
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
     # get best results
     if target_value_index <= 0 or target_value_index > len(gold_standard_drivers):
-        target_value_index = len(gold_standard_drivers)
+        target_value_index = 19
     better_counter = 0
     best_perf = {}
     for specific_res in all_res_dict.values():
