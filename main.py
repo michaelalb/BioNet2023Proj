@@ -188,9 +188,9 @@ if __name__ == '__main__':
                 'strict_vals': [1]
             }
     }
-    # performance_evaluation_main()
-    # parameters_analysis_main()
-    optimization_main(should_perform_param_search=True, param_limits=param_limits)
+    # performance_evaluation_main(r'ParamOptimizationResults\ParamSearchRes')
+    parameters_analysis_main(r'ParamOptimizationResults\ParamSearchRes')
+    # optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.2, beta=0.2, current_run_path=Path('./SingleRunResults/'))
     # optimization_main(should_perform_param_search=True, param_limits=param_limits)
     # run_single_ilp_analysis(alpha=0.01, beta=0.01,gamma=20, current_run_path=Path('./SingleRunResults/'))

@@ -118,16 +118,16 @@ def plot_performances(performances, is_sorted, save_path=None):
         plt.show()
 
 
-def performance_evaluation_main():
+def performance_evaluation_main(results_dir):
     patient_snps = load_patient_snps()
     PRODIGY_results = json.load(open('./Data/PRODIGY_results.json'))
     gold_standard_drivers = json.load(open('./Data/gold_standard_drivers.json'))
-    res = Utils.load_results(r"ParamOptimizationResults/12_13_2023_05_32")
+    res = Utils.load_results(results_dir)
     all_performances = {}
-    for (alpha, beta), ranked_genes_lists in res.items():
-        all_performances[(alpha, beta)] = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
+    for (alpha, beta, gamma), ranked_genes_lists in res.items():
+        all_performances[(alpha, beta, gamma)] = check_performances(ranked_genes_lists, patient_snps, gold_standard_drivers)
     PRODIGY_performances = check_performances(PRODIGY_results, patient_snps, gold_standard_drivers)
-    all_performances = {alpha: all_performances[(alpha, beta)] for alpha, beta in all_performances.keys() if beta == 0}
+    all_performances = {alpha: all_performances[(alpha, beta, gamma)] for alpha, beta, gamma in all_performances.keys() if (beta == 0) and (gamma == 1)}
     all_performances = dict(sorted(all_performances.items(), key=lambda item: item[0]))
     all_performances['PRODIGY'] = PRODIGY_performances
     plot_performances(all_performances, is_sorted=True)
